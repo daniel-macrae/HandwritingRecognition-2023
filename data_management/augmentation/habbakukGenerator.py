@@ -43,6 +43,7 @@ def create_word_page():
     # a list that contains the BB coordinates [x1, y1, x2, y2] for each letter
     BB = []
     CHARACTERS = []
+    TEXT = []
 
     fontSize = random.randint(35, 50)
     font = ImageFont.truetype('/Users/danie/Desktop/FSE 22-23/HandwritingRecognition-2023/data_management/augmentation/Habbakuk.ttf', fontSize)
@@ -68,13 +69,14 @@ def create_word_page():
     character_set_length = len(list(char_map))
 
     for row in rows:
+        rowText = []
         #for col in cols:
         col = random.choice(colStart)
         endColumn = random.choice(colEnd)
 
         while col < endColumn:
 
-            if random.random() > 0.3: # 30% chance of no letter = space in the sentence
+            if random.random() > 0.2: # 20% chance of no letter = space in the sentence
                 # pick a character randomly, get its dimensions
                 characterIDX = random.randint(0, character_set_length-1)
                 character = list(char_map)[characterIDX]
@@ -90,8 +92,11 @@ def create_word_page():
 
                 CHARACTERS.append(characterIDX)
                 BB.append([position[0] - bbPadding, position[1] - bbPadding, position[0]+w + bbPadding, position[1]+h + bbPadding])
+                rowText.append(character)
             else:
-                col += random.randint(20, 40)
+                col += random.randint(20, 40) # random-sized space between letters
+                rowText.append(' ')
+        TEXT.append(rowText)
 
 
 
@@ -115,7 +120,7 @@ def create_word_page():
     ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_OTSU) # make sure the image is binarised
 
 
-    return img, BB, CHARACTERS
+    return img, BB, CHARACTERS, TEXT
 
 
 
@@ -196,7 +201,7 @@ def visualiseImage(img, BBs, showBBs = True):
 
 
 
-def saveImageAndAnnotations(img, BB, CHARACTERS, img_path, label_path, name):
+def saveImageAndAnnotations(img, BB, CHARACTERS, TEXT, img_path, label_path, text_path, name):
     name = str(name)
     label_data = []
     for (character, bb) in zip(CHARACTERS, BB):
@@ -207,6 +212,12 @@ def saveImageAndAnnotations(img, BB, CHARACTERS, img_path, label_path, name):
     output_label_path = os.path.join(label_path, "labels_" + name + ".txt")
     with open(output_label_path, "w") as f:
         f.write("\n".join(label_data))
+
+    TEXT = [",".join(x) for x in TEXT]
+    #print(TEXT)
+    output_text_path = os.path.join(text_path, "text_" + name + ".txt")
+    with open(output_text_path, "w") as f:
+        f.write("\n".join(TEXT))
 
     output_image_path = os.path.join(img_path, "img_" + name + ".png")
 
