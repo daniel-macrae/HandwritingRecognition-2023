@@ -5,7 +5,7 @@ import os
 
 
 
-class aramicCharacterDataset(Dataset):
+class monkbrillDataset(Dataset):
     def __init__(self, folder_path):
         self.root = folder_path
         self.data = self.parseFolders()  # self.data is a list of tuples, which contain (pathToImage, imageClassLabel)
