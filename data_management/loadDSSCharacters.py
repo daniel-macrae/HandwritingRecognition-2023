@@ -31,7 +31,7 @@ class monkbrillDataset(Dataset):
                 if os.path.isdir(imgPath):
                     # skip directories
                     continue
-                dataTuples.append( (imgPath,label) ) # (path to the image, classification label)
+                dataTuples.append( (imgPath,label) ) # tuple of (path to image, classification label)
 
         return dataTuples
 

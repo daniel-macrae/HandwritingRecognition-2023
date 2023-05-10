@@ -278,7 +278,7 @@ def create_letter_image(label, img_size):
 def letterImageWarper(img):
     rows, cols = img.shape
 
-    warp_factors = list(np.arange(-8,9,1))
+    warp_factors = list(np.arange(-6,7,1))
     wave_lengths = list(np.arange(1,2.2,0.1))
 
     horizontalWarpFactor = random.choice(warp_factors)
@@ -305,6 +305,40 @@ def letterImageWarper(img):
     return img_output
 
 
+# function to rotate an image slighty (randomly, within a range)
+def imageRotator(img, rotation_range=15):
+    angle = random.randint(-rotation_range, rotation_range)
+
+    rows, cols = img.shape
+
+    img_center = (cols / 2, rows / 2)
+    M = cv2.getRotationMatrix2D(img_center, angle, 1)
+    rotated_image = cv2.warpAffine(img, M, (cols, rows),
+                           borderMode=cv2.BORDER_CONSTANT,
+                           borderValue=(255))
+    
+    return rotated_image
+
+# function to shear an image slighty in the x and y direction (randomly, within a range)
+def imageShearer(img, shear_range=0.2):
+    Xshear = random.uniform(-shear_range, shear_range)
+    Yshear = random.uniform(-shear_range, shear_range)
+
+    rows, cols = img.shape
+
+    M = np.float32([[1, Xshear, 0],
+             	[Yshear, 1  , 0],
+            	[0, 0  , 1]])
+    
+    sheared_image = cv2.warpPerspective(img, M, (cols, rows),
+                           borderMode=cv2.BORDER_CONSTANT,
+                           borderValue=(255))
+    
+    return sheared_image
+
+
+
+
 # generate N random images per letter in the dictionary
 def HabbakukLettersGenerator(path, N=100):
 
@@ -315,6 +349,10 @@ def HabbakukLettersGenerator(path, N=100):
             # make and warp an image containing just one letter
             img = create_letter_image(label, (50, 50))
             img = letterImageWarper(img)
+            img = imageRotator(img)
+            img = imageShearer(img)
+
+            ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)
 
             # make the filename, save the image (the label and label index is contained in the filename, so no need for seperate annotations)
             filename = str(label) + "_" + str(labelIDX) + "_" +  str(n) + ".png"
