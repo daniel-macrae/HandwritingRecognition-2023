@@ -10,7 +10,7 @@ class Segment:
         self.output_folder = os.path.join(os.getcwd(),'Data/Segmented')
         os.makedirs(self.output_folder, exist_ok=True)
 
-    def segment_characters(self, real_data=True, generated_data=False):
+    def segment_characters(self, real_data=False, generated_data=True):
         if real_data:
             images = self.loadRealData()
         if generated_data:
@@ -59,9 +59,9 @@ class Segment:
                         # 2px border for legibility
                         roi = img[y-2:y+h+2, x-2:x+w+2]
                         # print(f"area: {contour_area} \\n perimeter {contour_perimeter} \\n compactness {contour_compactness}")
-                        cv2.imshow('Segmented Characters', roi)
-                        cv2.waitKey(0)
-                        cv2.destroyAllWindows()
+                        # cv2.imshow('Segmented Characters', roi)
+                        # cv2.waitKey(0)
+                        # cv2.destroyAllWindows()
                         # cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         filename = self.output_folder + f'/page_{i}_character_{label}{j}.png'
                         if np.all(np.array(roi.shape) > 0):
@@ -86,12 +86,11 @@ class Segment:
 
     def loadGeneratedData(self):
         try:
-            files = os.listdir(os.path.join(self.input_folder,"Data/Habbakuk_Pages"))
+            files = os.listdir("Data/Habbakuk_Pages/images")
         except FileNotFoundError:
             print("Incorrect path. Please provide full path to input folder")
-            return []   
-        
-        files = [os.path.join(self.input_folder, file) for file in files]
+            return []
+        files = [os.path.join("Data/Habbakuk_Pages/images",file) for file in files]   
         images = []
         for file in files:
             image = cv2.imread(file)
@@ -123,7 +122,7 @@ class Segment:
 
 if __name__ == "__main__":
     #a = Segment()
-    a = Segment("/home/lucypher/Desktop/HandRec/Project/image-data/image-data")
+    a = Segment()
     a.segment_characters()
 
 
