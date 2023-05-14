@@ -116,7 +116,7 @@ class habbakukLettersDataset(Dataset):
         # get the target class label (the index of the actual letter) from the filename
         [letter_name, target] = image_file.split("_")[:2]  
 
-        target = int(target)
+        target = torch.tensor(int(target), dtype=torch.int32)
 
         return input_img, target
 
