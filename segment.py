@@ -20,10 +20,9 @@ class Segment:
             pass
         if images:
             for i,img in enumerate(images):
-                # cv2.imshow('OGimage',img)
-                # cv2.waitKey(0)
-                # cv2.destroyAllWindows()
                 print(f"processing image {i} out of {len(images)}")
+                if np.any(np.array(img.shape) < 0):
+                    continue
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 blurred = cv2.GaussianBlur(gray, (5, 5), 0)
                 thresholded = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
@@ -40,22 +39,38 @@ class Segment:
                     component = np.uint8(labels == label) * 255
                     contours, _ = cv2.findContours(component, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-                    # Filter out small or invalid bounding boxes
+                    # filter out small or invalid bounding boxes
                     for j,contour in enumerate(contours):
                         (x, y, w, h) = cv2.boundingRect(contour)
                         # these are artifacts
-                        if w < 10 or h < 10:
+                        if (w < 15 or h < 10):
                             continue
-                        # 2px border lor legibility
+
+                        # sometimes parts of characters are picked out as well, control these to change what gets detected
+                        contour_area = cv2.contourArea(contour)
+                        contour_perimeter = cv2.arcLength(contour, True)
+                        contour_compactness = (4 * np.pi * contour_area) / (contour_perimeter ** 2)
+                        
+                        # set appropriate threshold values for area and compactness
+                        # min_area_threshold = 50
+                        max_compactness_threshold = 0.3
+                        if contour_compactness > max_compactness_threshold:
+                            continue
+                        # 2px border for legibility
                         roi = img[y-2:y+h+2, x-2:x+w+2]
-                        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        # print(f"area: {contour_area} \\n perimeter {contour_perimeter} \\n compactness {contour_compactness}")
+                        cv2.imshow('Segmented Characters', roi)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
+                        # cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         filename = self.output_folder + f'/page_{i}_character_{label}{j}.png'
-                        # cv2.imwrite(filename,roi)
+                        if np.all(np.array(roi.shape) > 0):
+                            cv2.imwrite(filename,roi)
                 
-                imS = cv2.resize(img, (1000, 800)) 
-                cv2.imshow('Segmented Characters', imS)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+                # imS = cv2.resize(img, (1000, 800)) 
+                # cv2.imshow('Segmented Characters', imS)
+                # cv2.waitKey(0)
+                # cv2.destroyAllWindows()
                 # for j,contour in enumerate(contours):
                 #     # get bounding box
                 #     (x, y, w, h) = cv2.boundingRect(contour)
@@ -93,6 +108,8 @@ class Segment:
             files = [file for file in files if "binarized" in file]
         if only_fused:
             files = [file for file in files if "fused" in file]
+        if only_binary and only_fused:
+            pass
 
         files = [os.path.join(self.input_folder, file) for file in files]
         images = []
@@ -105,8 +122,8 @@ class Segment:
 
 
 if __name__ == "__main__":
-    a = Segment()
-    #a = CharacterSegment("/home/lucypher/Desktop/HandRec/Project/image-data/image-data")
+    #a = Segment()
+    a = Segment("/home/lucypher/Desktop/HandRec/Project/image-data/image-data")
     a.segment_characters()
 
 
