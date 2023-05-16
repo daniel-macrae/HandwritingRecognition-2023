@@ -11,7 +11,7 @@ class monkbrillDataset(Dataset):
         self.data = self.parseFolders()  # self.data is a list of tuples, which contain (pathToImage, imageClassLabel)
 
         self.convert_tensor = transforms.ToTensor()
-        self.charcterClasses = os.listdir(self.root)
+        self.characterClasses = os.listdir(self.root)
 
         self.resize_image = transforms.Resize((50,50))
 
