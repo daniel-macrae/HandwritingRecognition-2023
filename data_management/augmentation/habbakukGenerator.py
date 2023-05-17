@@ -268,6 +268,10 @@ def create_letter_image(label, img_size):
     if random.random() > 0.4:
         kernel = np.ones((3, 3), np.uint8)
         img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+
+    kernelsize = random.randrange(7, 13+1, 2) # pick a random (odd) kernel size
+    img = cv2.GaussianBlur(img, (kernelsize, kernelsize) ,0)  # softens the image, gets an "aged" look (i.e. the sharp corners/lines fade into the paper)
+    
     ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)
 
     return img
@@ -344,6 +348,8 @@ def HabbakukLettersGenerator(path, N=100):
 
     for labelIDX in range(len(list(char_map))):
         label = list(char_map)[labelIDX]
+        print(label)
+        print(labelIDX)
 
         for n in range(N):
             # make and warp an image containing just one letter

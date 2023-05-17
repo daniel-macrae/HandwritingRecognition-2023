@@ -38,6 +38,7 @@ class monkbrillDataset(Dataset):
     def __getitem__(self, index):
         path, label = self.data[index]
         img = Image.open(path)
+        print(img.size)
         
         input_img = self.convert_tensor(img)
         input_img = self.resize_image(input_img)  # RESIZING?
