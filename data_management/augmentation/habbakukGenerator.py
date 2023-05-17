@@ -6,6 +6,8 @@ import random
 import math
 import cv2
 
+from commonAug import letterImageWarper, imageRotator, imageShearer 
+
 
 #Character mapping for each of the 27 tokens
 char_map = {'Alef' : ')', 
@@ -276,69 +278,6 @@ def create_letter_image(label, img_size):
 
     return img
 
-
-
-# warp the letter images, parameters are slightly different to the whole page image warper (as these letter images are smaller)
-def letterImageWarper(img):
-    rows, cols = img.shape
-
-    warp_factors = list(np.arange(-6,7,1))
-    wave_lengths = list(np.arange(1,2.2,0.1))
-
-    horizontalWarpFactor = random.choice(warp_factors)
-    verticalWarpFactor = random.choice(warp_factors)
-    horzWaveLength = random.choice(wave_lengths)
-    vertWaveLength = random.choice(wave_lengths)
-
-    img_output = np.ones(img.shape, dtype=img.dtype) * 255 # make a blank white image to place the warp on
-
-    x_offsets = [int(horizontalWarpFactor * math.sin(2 * 3.14 * x_coord / (cols*horzWaveLength))) for x_coord in np.arange(0,cols,1)] 
-    y_offsets = [int(verticalWarpFactor * math.sin(2 * 3.14 * y_coord / (rows*vertWaveLength))) for y_coord in np.arange(0,rows,1)] 
-
-
-    for i in range(rows):
-        for j in range(cols):
-
-            offset_x = x_offsets[i] # how much to move left and right (which is based on row positon)
-            offset_y = y_offsets[j] # how much to move up and down (which is based on column positon)
-
-            # if still within the image, move the pixel value, otherwise, the output image is white anyway (255 value)
-            if 0 <= i+offset_y < rows  and   0 <= j+offset_x < cols:
-                img_output[i,j] = img[i+offset_y, j+offset_x]
-
-    return img_output
-
-
-# function to rotate an image slighty (randomly, within a range)
-def imageRotator(img, rotation_range=15):
-    angle = random.randint(-rotation_range, rotation_range)
-
-    rows, cols = img.shape
-
-    img_center = (cols / 2, rows / 2)
-    M = cv2.getRotationMatrix2D(img_center, angle, 1)
-    rotated_image = cv2.warpAffine(img, M, (cols, rows),
-                           borderMode=cv2.BORDER_CONSTANT,
-                           borderValue=(255))
-    
-    return rotated_image
-
-# function to shear an image slighty in the x and y direction (randomly, within a range)
-def imageShearer(img, shear_range=0.2):
-    Xshear = random.uniform(-shear_range, shear_range)
-    Yshear = random.uniform(-shear_range, shear_range)
-
-    rows, cols = img.shape
-
-    M = np.float32([[1, Xshear, 0],
-             	[Yshear, 1  , 0],
-            	[0, 0  , 1]])
-    
-    sheared_image = cv2.warpPerspective(img, M, (cols, rows),
-                           borderMode=cv2.BORDER_CONSTANT,
-                           borderValue=(255))
-    
-    return sheared_image
 
 
 
