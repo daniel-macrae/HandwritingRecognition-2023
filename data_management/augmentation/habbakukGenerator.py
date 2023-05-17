@@ -6,7 +6,7 @@ import random
 import math
 import cv2
 
-from commonAug import letterImageWarper, imageRotator, imageShearer 
+from .commonAug import letterImageWarper, imageRotator, imageShearer 
 
 
 #Character mapping for each of the 27 tokens

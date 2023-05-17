@@ -2,10 +2,12 @@ import os
 from collections import Counter
 import shutil
 from sklearn.model_selection import train_test_split
-from data_management.augmentation.commonAug import imgResizer
-from data_management.augmentation.habbakukGenerator import create_letter_image, letterImageWarper
+from data_management.augmentation.habbakukGenerator import create_letter_image
 import cv2
-
+import random
+from itertools import chain, combinations
+from data_management.augmentation.commonAug import imgResizer, imageRotator, imageShearer, letterImageWarper, imageDilator, imageEroder
+from tqdm import tqdm
 
 
 # function that copies images to a temporary folder, only if the image is unique enough
@@ -14,7 +16,7 @@ import cv2
 def duplicates_remover(source_folder, temp_folder, positionThreshold, sizeThreshold):
     shapesDict = {}
     
-    for folder in os.listdir(source_folder):
+    for folder in tqdm(os.listdir(source_folder)):
         folder_path = os.path.join(source_folder, folder) # current folder directory
         
         for filename in os.listdir(folder_path):
@@ -81,19 +83,16 @@ def train_test_val_splitter(temp_folder, outputFolder, validation_set = True, re
         X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=0, stratify=y_train, shuffle=True)
 
     
-    sets = {"train" : (X_train, y_train), 
-            "test" : (X_test, y_test)}
+    sets = {"test" : (X_test, y_test),
+            "train" : (X_train, y_train) 
+            }
     
     if validation_set:  sets["validation"] = (X_val, y_val)
 
     # make train/test(/validation) folders
     for key in sets:
         folderPath = os.path.join(outputFolder, key) # makes the train, validate, test folders
-        try:
-            shutil.rmtree(folderPath)                # remove the folders, if they're already there
-            os.makedirs(folderPath, exist_ok = True)
-        except:
-            os.makedirs(folderPath, exist_ok = True)
+        os.makedirs(folderPath, exist_ok = True)
 
 
     # move the files into the folders
@@ -190,4 +189,56 @@ def fillInImbalancedClasses(training_set_folder, amount=1):
 
 
 
+""""
+DATA AUGMENTATION OF TRAINING SET
+"""
 
+def all_subsets(ss):
+    return list(chain(*map(lambda x: combinations(ss, x), range(1, len(ss)+1))))
+
+
+def augment_training_set(training_set_folder, possible_transforms, number_of_augmentations):
+
+    all_combinations = all_subsets(possible_transforms)
+    print("number of augmentation method combinations:", len(all_combinations))
+
+
+    for folder in tqdm(os.listdir(training_set_folder)):
+        counter = 0
+        #print(folder)
+
+        folderPath = os.path.join(training_set_folder, folder)
+        orginalFiles = [os.path.join(folderPath, filename) for filename in os.listdir(folderPath)]
+
+        for orig_img_path in orginalFiles:
+            counter += 1
+            orig_img = cv2.imread(orig_img_path, cv2.IMREAD_GRAYSCALE)
+
+            # for each possible combination of aug methods
+            for subset in random.sample(all_combinations, number_of_augmentations):  
+                img = orig_img.copy()
+
+                transformations = list(subset)
+                random.shuffle(transformations) # do the transformations in a random order
+                fileName = folder + "_" + str(counter) + "_"
+                
+                for transform in transformations:
+                    #print(transform, transform[0])
+                    fileName += transform[0]
+
+                    if transform == "rotate":
+                        img = imageRotator(img, rotation_range=15) # rotate up to 15 degrees either direction
+                        imageDilator, imageEroder
+                    elif transform == "shear":
+                        img = imageShearer(img, shear_range=0.15)
+                    elif transform == "warp":
+                        img = letterImageWarper(img)
+                    elif transform == "erode":
+                        img = imageEroder(img, max_erode_size=4)    # erode and dilates with a kernel of a random size in range [2, max_X_size]
+                    elif transform == "dilate":
+                        img = imageDilator(img, max_dilate_size=4)
+
+                # finalise the path of the augmented image, and save it
+                fileName += ".png"
+                target_path = os.path.join(folderPath, fileName)
+                cv2.imwrite(target_path, img)
