@@ -13,7 +13,7 @@ class dssLettersDataset(Dataset):
         self.convert_tensor = transforms.ToTensor()
         self.characterClasses = os.listdir(self.root)
 
-        self.resize_image = transforms.Resize((50,50))
+        self.resize_image = transforms.Resize((50,50), antialias=True)
 
     def parseFolders(self): 
         dataTuples = []

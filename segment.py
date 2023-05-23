@@ -124,3 +124,4 @@ if __name__ == "__main__":
     #a = Segment()
     a = Segment()
     a.segment_characters()
+

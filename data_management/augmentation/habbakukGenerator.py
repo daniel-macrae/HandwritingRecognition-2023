@@ -48,7 +48,7 @@ def create_word_page():
     TEXT = []
 
     fontSize = random.randint(35, 50)
-    font = ImageFont.truetype('/Users/danie/Desktop/FSE 22-23/HandwritingRecognition-2023/data_management/augmentation/Habbakuk.ttf', fontSize)
+    font = ImageFont.truetype('data_management/augmentation/Habbakuk.ttf', fontSize)
 
     widthNoise = 3
     heightNoise = 3
@@ -245,7 +245,7 @@ BELOW IS JUST FOR THE SINGLE LETTER IMAGES
 #Returns a grayscale image based on specified label of img_size
 def create_letter_image(label, img_size):
 
-    font = ImageFont.truetype('/Users/danie/Desktop/FSE 22-23/HandwritingRecognition-2023/data_management/augmentation/Habbakuk.ttf',
+    font = ImageFont.truetype('data_management/augmentation/Habbakuk.ttf',
                               random.randint(30, 45))
 
     #Create blank image and create a draw interface

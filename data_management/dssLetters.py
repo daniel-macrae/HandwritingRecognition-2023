@@ -21,7 +21,8 @@ def duplicates_remover(source_folder, temp_folder, positionThreshold, sizeThresh
         
         for filename in os.listdir(folder_path):
             file_path = os.path.join(folder_path, filename) # full path to the image we are currently on
-
+            if os.path.isdir(file_path):
+              continue
             target_folder = os.path.join(temp_folder, folder) # stuff to make a target directory
             os.makedirs(target_folder, exist_ok = True)
             target_file_path = os.path.join(target_folder, filename)
@@ -73,9 +74,9 @@ def train_test_val_splitter(temp_folder, outputFolder, validation_set = True, re
 
 
     # get the class label for each image in filePaths
-    image_labels = [file_path.split('\\')[-2].split("_")[-1] for file_path in filePaths]
-
-
+    image_labels = [file_path.split('/')[-2].split("_")[-1] for file_path in filePaths]
+                        #changed '\\' for '/'
+                        
     # make train, validate, testing sets (using the image paths and labels)
     X_train, X_test, y_train, y_test = train_test_split(filePaths, image_labels, test_size=0.3, random_state=0, stratify=image_labels, shuffle=True)
 
@@ -108,6 +109,11 @@ def train_test_val_splitter(temp_folder, outputFolder, validation_set = True, re
             os.makedirs(folderPath, exist_ok = True)  # checks to see if the folder for this class is made (within the train/val or test folders)
 
             filename = os.path.split(imgPath)[-1]
+            
+            if not filename.lower().endswith('.jpg'):
+                print(f"Skipping file {imgPath} - not a JPEG image")
+                continue
+                
             target_im_dir = os.path.join(folderPath, filename)
             #print(target_im_dir)
 
