@@ -117,7 +117,7 @@ valSteps = len(validation_loader.dataset) // BATCH_SIZE
 # set the device we will be using to train the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = LeNet5().to(device)
+model = DanNet1().to(device)
 # initialize our optimizer and loss function
 opt = Adam(model.parameters(), lr=INIT_LR)
 criterion = nn.CrossEntropyLoss()
@@ -215,9 +215,9 @@ for e in range(0, EPOCHS):
 os.makedirs("classification_models", exist_ok = True)
 
 args = {
-    "plot_loss": "classification_models/plot_loss_L5.png",
-    "plot_acc": "classification_models/plot_acc_L5.png",
-    "model": "classification_models/model_L5.pth"
+    "plot_loss": "classification_models/plot_loss_D1.png",
+    "plot_acc": "classification_models/plot_acc_D1.png",
+    "model": "classification_models/model_D1.pth"
 }
 
 # plot the training loss and accuracy
