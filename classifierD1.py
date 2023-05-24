@@ -120,6 +120,8 @@ def trainModel():
     BATCH_SIZE = 128
     EPOCHS = 100
 
+    VALIDATION_RATE = 5 # note down the train/val error every X epochs
+
     train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
     validation_loader = DataLoader(validation_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
 
@@ -185,7 +187,7 @@ def trainModel():
                 torch.float).sum().item()
 
             
-        if e % 5 == 0:
+        if e % VALIDATION_RATE == 0:
 
             "EVALUATION"
 
@@ -238,7 +240,7 @@ def trainModel():
 
     # plot the training loss and accuracy
 
-    epochs = np.arange(len(H["train_loss"]))*10
+    epochs = np.arange(len(H["train_loss"]))*VALIDATION_RATE
 
     plt.style.use("ggplot")
     plt.figure()
