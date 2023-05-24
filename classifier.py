@@ -221,7 +221,7 @@ def trainModel():
             H["val_acc"].append(valCorrect)
 
             # print the model training and validation information
-            print("[INFO] EPOCH: {}/{}".format(e + 1, EPOCHS))
+            print("[INFO] EPOCH: {}/{}".format(e, EPOCHS))
             print("Train loss: {:.6f}, Train accuracy: {:.4f}".format(
                 avgTrainLoss, trainCorrect))
             print("Val loss: {:.6f}, Val accuracy: {:.4f}\n".format(

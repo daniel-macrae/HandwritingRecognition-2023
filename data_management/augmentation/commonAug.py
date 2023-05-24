@@ -52,8 +52,8 @@ def whitespaceRemover(img, padding=5):
 def letterImageWarper(img):
     rows, cols = img.shape
 
-    warp_factors = list(np.arange(-5,6,1))
-    wave_lengths = list(np.arange(1,2.2,0.1))
+    warp_factors = list(np.arange(-4,5,1))
+    wave_lengths = list(np.arange(1.2,2,0.1))
 
     horizontalWarpFactor = random.choice(warp_factors)
     verticalWarpFactor = random.choice(warp_factors)

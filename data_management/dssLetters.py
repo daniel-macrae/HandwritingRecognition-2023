@@ -152,7 +152,7 @@ training_set_folder = "Data/dssLetters/train/"
 
 
 
-def fillInImbalancedClasses(training_set_folder, amount=1):
+def fillInImbalancedClasses(training_set_folder, amount=1, image_size = 32):
 
     letterClassCounts = instancesPerClassCounter(training_set_folder)
 
@@ -169,9 +169,9 @@ def fillInImbalancedClasses(training_set_folder, amount=1):
 
         while letterClassCounts[letterClass] < highestCount * amount:
             # generate a new image, using the habbakuk font
-            img = create_letter_image(letterClass, (50,50))
+            img = create_letter_image(letterClass, (image_size,image_size) )
             img = letterImageWarper(img)
-            ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)
+            _, img = cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)
 
             labelIDX = classes.index(letterClass)
 

@@ -246,13 +246,14 @@ BELOW IS JUST FOR THE SINGLE LETTER IMAGES
 def create_letter_image(label, img_size):
 
     font = ImageFont.truetype('data_management/augmentation/Habbakuk.ttf',
-                              random.randint(30, 45))
+                              random.randint(20, 35))
+
 
     #Create blank image and create a draw interface
     img = Image.new('L', img_size, 255)    
     draw = ImageDraw.Draw(img)
 
-    translation_factor = 5
+    translation_factor = 3
     horzontal_translation = random.randint(-translation_factor, translation_factor)
     vertical_translation = random.randint(-translation_factor, translation_factor)
 
@@ -271,7 +272,7 @@ def create_letter_image(label, img_size):
         kernel = np.ones((3, 3), np.uint8)
         img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
 
-    kernelsize = random.randrange(7, 13+1, 2) # pick a random (odd) kernel size
+    kernelsize = random.randrange(3, 7+1, 2) # pick a random (odd) kernel size
     img = cv2.GaussianBlur(img, (kernelsize, kernelsize) ,0)  # softens the image, gets an "aged" look (i.e. the sharp corners/lines fade into the paper)
     
     ret, img = cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)

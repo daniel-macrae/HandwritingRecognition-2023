@@ -25,14 +25,14 @@ desired_size = 32      # and to what size (eg. 50 is 50x50)
 
 
 # whether or not to fill in the class imbalance with Habbakuk images
-fillClassImbalance = False
-fill_amount = 1
+fillClassImbalance = True
+fill_amount = 0.3
 
 
 
 augment_training = True  # yes or no augmentaion applied on the whole training set
 possible_transforms = ["rotate", "shear", "warp", "erode", "dilate"]
-number_of_augmentations = 5   # 5 sets of augmentions per original image
+number_of_augmentations = 1   # 5 sets of augmentions per original image
 
 
 
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         # or more than 1 (e.g. adds habbakuk letters to all classes)
 
         print("\naddressing class imbalance by generating new images")
-        fillInImbalancedClasses(training_set_folder, amount=fill_amount)
+        fillInImbalancedClasses(training_set_folder, amount=fill_amount, image_size=desired_size)
 
 
 
