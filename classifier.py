@@ -15,7 +15,7 @@ import torch
 import torch.nn as nn
 
 class CharacterCNN(nn.Module):
-    def __init__(self, numChannels = 1, classes = 27, BATCH_SIZE = 16, dropout_rate = 0.5):
+    def __init__(self, numChannels = 1, classes = 27, dropout_rate = 0.5):
         super(CharacterCNN, self).__init__()
 
         """
@@ -27,11 +27,10 @@ class CharacterCNN(nn.Module):
         self.relu = nn.ReLU() # could also just use nn.functional.relu
         #self.logSoftmax = nn.LogSoftmax(dim=1)
         """
-
-        self.conv1 = nn.Conv2d(numChannels, 16, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(16, BATCH_SIZE, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(numChannels, 32, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(32, 16, kernel_size=3, stride=1, padding=1)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.fc1 = nn.Linear( BATCH_SIZE *12* 12, 64) #this shoulf be BATCH_SIZE *12* 12 but that doesnt work
+        self.fc1 = nn.Linear( 16 *12* 12, 64) #this shoulf be BATCH_SIZE *12* 12 but that doesnt work
         self.fc2 = nn.Linear(64, classes)
         self.relu = nn.ReLU() # could also just use nn.functional.relu
         #self.logSoftmax = nn.LogSoftmax(dim=1)
@@ -51,6 +50,37 @@ class CharacterCNN(nn.Module):
         output = self.fc2(x)
         #output = self.logSoftmax(output)
         return output
+
+class LeNet5(nn.Module):
+    def __init__(self, num_classes):
+        super(LeNet5, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=0),
+            nn.BatchNorm2d(6),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size = 2, stride = 2))
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(32, 16, kernel_size=5, stride=1, padding=0),
+            nn.BatchNorm2d(16),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size = 2, stride = 2))
+        self.fc = nn.Linear(400, 120)
+        self.relu = nn.ReLU()
+        self.fc1 = nn.Linear(120, 84)
+        self.relu1 = nn.ReLU()
+        self.fc2 = nn.Linear(84, num_classes)
+        
+    def forward(self, x):
+        out = self.layer1(x)
+        out = self.layer2(out)
+        out = out.reshape(out.size(0), -1)
+        out = self.fc(out)
+        out = self.relu(out)
+        out = self.fc1(out)
+        out = self.relu1(out)
+        out = self.fc2(out)
+        return out
+
 
 from data_management.loadDSSCharacters import dssLettersDataset
 
@@ -78,7 +108,7 @@ valSteps = len(validation_loader.dataset) // BATCH_SIZE
 # set the device we will be using to train the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = CharacterCNN().to(device)
+model = LeNet5().to(device)
 # initialize our optimizer and loss function
 opt = Adam(model.parameters(), lr=INIT_LR)
 criterion = nn.CrossEntropyLoss()

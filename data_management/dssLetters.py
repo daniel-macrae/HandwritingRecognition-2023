@@ -8,6 +8,7 @@ import random
 from itertools import chain, combinations
 from data_management.augmentation.commonAug import imgResizer, imageRotator, imageShearer, letterImageWarper, imageDilator, imageEroder
 from tqdm import tqdm
+from pathlib import Path
 
 
 # function that copies images to a temporary folder, only if the image is unique enough
@@ -56,6 +57,7 @@ def duplicates_remover(source_folder, temp_folder, positionThreshold, sizeThresh
                     shutil.copy(file_path, target_file_path)
             except:
                 shutil.copy(file_path, target_file_path)
+            
 
 
 
@@ -74,14 +76,12 @@ def train_test_val_splitter(temp_folder, outputFolder, validation_set = True, re
 
 
     # get the class label for each image in filePaths
-    image_labels = [file_path.split('/')[-2].split("_")[-1] for file_path in filePaths]
-                        #changed '\\' for '/'
-                        
+    image_labels = [Path(file_path).parts[-2].split("_")[-1] for file_path in filePaths]
     # make train, validate, testing sets (using the image paths and labels)
-    X_train, X_test, y_train, y_test = train_test_split(filePaths, image_labels, test_size=0.3, random_state=0, stratify=image_labels, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(filePaths, image_labels, test_size=0.2, random_state=0, stratify=image_labels, shuffle=True)
 
     if validation_set:
-        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=0, stratify=y_train, shuffle=True)
+        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=0, stratify=y_train, shuffle=True)
 
     
     sets = {"test" : (X_test, y_test),

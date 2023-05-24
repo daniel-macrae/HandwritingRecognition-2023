@@ -18,21 +18,21 @@ positionThreshold = 50
 sizeThreshold = 5
 
 # make test, train, (validation) set folders into the target_folder
-validation_set = True  # whether or not we want a seperate validation set (makes the training set smaller)
+validation_set = False  # whether or not we want a seperate validation set (makes the training set smaller)
 
 reshape = True         # if we want to reshape all of the images now
-desired_size = 50      # and to what size (eg. 50 is 50x50)
+desired_size = 32      # and to what size (eg. 50 is 50x50)
 
 
 # whether or not to fill in the class imbalance with Habbakuk images
-fillClassImbalance = True
+fillClassImbalance = False
 fill_amount = 1
 
 
 
 augment_training = True  # yes or no augmentaion applied on the whole training set
 possible_transforms = ["rotate", "shear", "warp", "erode", "dilate"]
-number_of_augmentations = 5   # 5 sets of augmentions per original image
+number_of_augmentations = 2   # 5 sets of augmentions per original image
 
 
 

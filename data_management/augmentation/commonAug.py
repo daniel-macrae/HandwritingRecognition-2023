@@ -3,8 +3,7 @@ import random
 import numpy as np
 import math
 
-
-def imgResizer(img, desired_size=50):
+def imgResizer(img, desired_size=32):
     old_size = img.shape[:2] # old_size is in (height, width) format
 
     ratio = float(desired_size)/max(old_size)
@@ -12,7 +11,7 @@ def imgResizer(img, desired_size=50):
 
     # new_size should be in (width, height) format
 
-    img = cv2.resize(img, (new_size[1], new_size[0]))
+    img = cv2.resize(img, (new_size[1], new_size[0]), cv2.INTER_NEAREST)
 
     delta_w = desired_size - new_size[1]
     delta_h = desired_size - new_size[0]
@@ -23,13 +22,30 @@ def imgResizer(img, desired_size=50):
     new_im = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT,
         value=color)
     
-    _, new_im = cv2.threshold(new_im, 0, 255, cv2.THRESH_OTSU)
+    #_, new_im = cv2.threshold(new_im, 0, 255, cv2.THRESH_OTSU)
 
     return new_im
 
 
 
+def whitespaceRemover(img, padding=5):  
+    imHeight, imWidth = img.shape # get the image dimensions
+    # find the BB of the contents of the image
+    gray_img = img.copy()
+    gray_img = 255*(gray_img < 128).astype(np.uint8) # To invert the text to white
+    gray_img = cv2.morphologyEx(gray_img, cv2.MORPH_OPEN, np.ones((5, 5), dtype=np.uint8)) # Perform noise filtering
+    coords = cv2.findNonZero(gray_img) # Find all non-zero points (text)
+    x, y, w, h = cv2.boundingRect(coords) # Find minimum spanning bounding box
 
+    # pad each side
+    y_min = y-padding if y-padding>=0 else 0
+    y_max = y+h+padding if y+h+padding<=imHeight else imHeight
+    x_min = x-padding if x-padding>=0 else 0
+    x_max = x+w+padding if x+w+padding<=imWidth else imWidth
+
+    cropped_img = img[y_min:y_max, x_min:x_max] # Crop the image - note we do this on the original image
+    
+    return cropped_img
 
 
 # warp the letter images, parameters are slightly different to the whole page image warper (as these letter images are smaller)
