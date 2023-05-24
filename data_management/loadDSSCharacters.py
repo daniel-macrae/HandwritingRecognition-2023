@@ -20,7 +20,7 @@ class dssLettersDataset(Dataset):
 
     def parseFolders(self): 
         dataTuples = []
-        for idx, folderName in enumerate(os.listdir(self.root)):
+        for idx, folderName in enumerate(self.characterClasses):
             # path to the images in the folders
             imageFolderPath = os.path.join(self.root, folderName)
             
