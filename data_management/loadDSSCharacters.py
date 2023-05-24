@@ -12,6 +12,7 @@ class dssLettersDataset(Dataset):
 
         self.convert_tensor = transforms.ToTensor()
         self.characterClasses = os.listdir(self.root)
+        self.characterClasses.sort()
         print(folder_path)
         print("   ", self.characterClasses)
 
