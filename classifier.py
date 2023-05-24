@@ -263,7 +263,7 @@ def trainModel():
     torch.save(model.state_dict(), args["model"])
 
     print("DONE!")
-    print("Duration: ", startTime - time.time())
+    print("Duration: ", (startTime - time.time())/60, "minutes")
 
 if __name__ == "__main__":
     trainModel()
