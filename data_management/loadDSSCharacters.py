@@ -8,11 +8,14 @@ import os
 class dssLettersDataset(Dataset):
     def __init__(self, folder_path):
         self.root = folder_path
+
+        self.characterClasses = os.listdir(self.root)
+        self.characterClasses.sort()
+        
         self.data = self.parseFolders()  # self.data is a list of tuples, which contain (pathToImage, imageClassLabel)
 
         self.convert_tensor = transforms.ToTensor()
-        self.characterClasses = os.listdir(self.root)
-        self.characterClasses.sort()
+        
         print(folder_path)
         print("   ", self.characterClasses)
 
