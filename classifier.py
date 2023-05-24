@@ -52,48 +52,57 @@ class CharacterCNN(nn.Module):
         return output
 
 class LeNet5(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes=27):
         super(LeNet5, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=0),
+            nn.Conv2d(1, 6, kernel_size=5, stride=1, padding=0),
             nn.BatchNorm2d(6),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size = 2, stride = 2))
         self.layer2 = nn.Sequential(
-            nn.Conv2d(32, 16, kernel_size=5, stride=1, padding=0),
+            nn.Conv2d(6, 16, kernel_size=5, stride=1, padding=0),
             nn.BatchNorm2d(16),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.fc = nn.Linear(400, 120)
+        self.fc = nn.Linear(1296, 120)
         self.relu = nn.ReLU()
         self.fc1 = nn.Linear(120, 84)
         self.relu1 = nn.ReLU()
         self.fc2 = nn.Linear(84, num_classes)
+
+
+class DanNet1(nn.Module):
+    def __init__(self, num_classes=27):
+        super(DanNet1, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=0),
+            nn.BatchNorm2d(16),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size = 2, stride = 2))
+        self.fc = nn.Linear(int(18432/2), 512)
+        self.relu = nn.ReLU()
+        self.fc1 = nn.Linear(512, num_classes)
         
     def forward(self, x):
         out = self.layer1(x)
-        out = self.layer2(out)
         out = out.reshape(out.size(0), -1)
         out = self.fc(out)
         out = self.relu(out)
         out = self.fc1(out)
-        out = self.relu1(out)
-        out = self.fc2(out)
         return out
-
 
 from data_management.loadDSSCharacters import dssLettersDataset
 
 train_dir = 'Data/dssLetters/train/'
-val_dir = 'Data/dssLetters/validation/'
+val_dir = 'Data/dssLetters/test/'
 
 train_set = dssLettersDataset(folder_path= train_dir)
 validation_set = dssLettersDataset(folder_path= val_dir)
 
 # define training hyperparameters
-INIT_LR = 1e-3
-BATCH_SIZE = 16
-EPOCHS = 100
+INIT_LR = 1e-4
+BATCH_SIZE = 128
+EPOCHS = 50
 
 train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
 validation_loader = DataLoader(validation_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
@@ -108,7 +117,7 @@ valSteps = len(validation_loader.dataset) // BATCH_SIZE
 # set the device we will be using to train the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = LeNet5().to(device)
+model = DanNet1().to(device)
 # initialize our optimizer and loss function
 opt = Adam(model.parameters(), lr=INIT_LR)
 criterion = nn.CrossEntropyLoss()
