@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
 
     print("\nmaking train, test, (& validation) folders")
-    train_test_val_splitter(temp_folder, target_folder, validation_set = validation_set, reshape = True, desired_size = 50)
+    train_test_val_splitter(temp_folder, target_folder, validation_set = validation_set, reshape = True, desired_size = desired_size)
     # also deletes the temp_folder
 
 

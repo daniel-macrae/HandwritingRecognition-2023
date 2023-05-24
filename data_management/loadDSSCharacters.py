@@ -12,8 +12,10 @@ class dssLettersDataset(Dataset):
 
         self.convert_tensor = transforms.ToTensor()
         self.characterClasses = os.listdir(self.root)
+        print(folder_path)
+        print("   ", self.characterClasses)
 
-        self.resize_image = transforms.Resize((50,50), antialias=True)
+        #self.resize_image = transforms.Resize((32,32), antialias=True)
 
     def parseFolders(self): 
         dataTuples = []
@@ -40,9 +42,7 @@ class dssLettersDataset(Dataset):
         img = Image.open(path)
         
         input_img = self.convert_tensor(img)
-        input_img = self.resize_image(input_img)  # RESIZING?
-
-        #print(input_img.shape)
+        #input_img = self.resize_image(input_img)  # RESIZING?
 
         return input_img, label
     

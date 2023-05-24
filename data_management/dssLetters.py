@@ -67,7 +67,7 @@ def duplicates_remover(source_folder, temp_folder, positionThreshold, sizeThresh
 make train, test set. validation set is optional
 """
 
-def train_test_val_splitter(temp_folder, outputFolder, validation_set = True, reshape = True, desired_size = 50):
+def train_test_val_splitter(temp_folder, outputFolder, validation_set = True, reshape = True, desired_size = 32):
     # put the paths to all of the images here
     filePaths = []
     for root, dirs, files in os.walk(temp_folder):
