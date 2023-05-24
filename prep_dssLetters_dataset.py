@@ -30,9 +30,9 @@ fill_amount = 1
 
 
 
-augment_training = False  # yes or no augmentaion applied on the whole training set
+augment_training = True  # yes or no augmentaion applied on the whole training set
 possible_transforms = ["rotate", "shear", "warp", "erode", "dilate"]
-number_of_augmentations = 2   # 5 sets of augmentions per original image
+number_of_augmentations = 5   # 5 sets of augmentions per original image
 
 
 

@@ -116,9 +116,9 @@ def trainModel():
     validation_set = dssLettersDataset(folder_path= val_dir)
 
     # define training hyperparameters
-    INIT_LR = 1e-4
+    INIT_LR = 1e-3
     BATCH_SIZE = 128
-    EPOCHS = 50
+    EPOCHS = 100
 
     train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
     validation_loader = DataLoader(validation_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
@@ -185,7 +185,7 @@ def trainModel():
                 torch.float).sum().item()
 
             
-        if e % 1 == 0:
+        if e % 5 == 0:
 
             "EVALUATION"
 
