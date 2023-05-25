@@ -14,97 +14,10 @@ import os
 import torch
 import torch.nn as nn
 
-class CharacterCNN(nn.Module):
-    def __init__(self, numChannels = 1, classes = 27, dropout_rate = 0.5):
-        super(CharacterCNN, self).__init__()
-
-        """
-        self.conv1 = nn.Conv2d(numChannels, 32, kernel_size=5, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(32, BATCH_SIZE, kernel_size=5, stride=1, padding=1)
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.fc1 = nn.Linear( BATCH_SIZE *12* 12, 128) #this shoulf be BATCH_SIZE *12* 12 but that doesnt work
-        self.fc2 = nn.Linear(128, classes)
-        self.relu = nn.ReLU() # could also just use nn.functional.relu
-        #self.logSoftmax = nn.LogSoftmax(dim=1)
-        """
-        self.conv1 = nn.Conv2d(numChannels, 32, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(32, 16, kernel_size=3, stride=1, padding=1)
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.fc1 = nn.Linear( 16 *12* 12, 64) #this shoulf be BATCH_SIZE *12* 12 but that doesnt work
-        self.fc2 = nn.Linear(64, classes)
-        self.relu = nn.ReLU() # could also just use nn.functional.relu
-        #self.logSoftmax = nn.LogSoftmax(dim=1)
-        self.dropout = nn.Dropout(dropout_rate)
- 
-    # Using nn.functional provides a more concise syntax since it directly applies the operations as functions,
-    # while using the corresponding layers from torch.nn allows for explicit control over the layers used in the network
-    def forward(self, x):
-        x = self.pool(self.relu(self.conv1(x)))
-        x = self.dropout(x)
-        x = self.pool(self.relu(self.conv2(x)))
-        x = self.dropout(x)
-        #x = torch.flatten(x, 1)
-        x = x.view(x.size(0), -1) #same as flatten
-        x = self.relu(self.fc1(x))
-        x = self.dropout(x)
-        output = self.fc2(x)
-        #output = self.logSoftmax(output)
-        return output
-
-
-class DanNet1(nn.Module):
-    def __init__(self, num_classes=27):
-        super(DanNet1, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=0),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.fc = nn.Linear(3600, 128)
-        self.relu = nn.ReLU()
-        self.fc1 = nn.Linear(128, num_classes)
-        
-    def forward(self, x):
-        out = self.layer1(x)
-        out = out.reshape(out.size(0), -1)
-        out = self.fc(out)
-        out = self.relu(out)
-        out = self.fc1(out)
-        return out
-
-
-class LeNet5(nn.Module):
-    def __init__(self, num_classes=27):
-        super(LeNet5, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 6, kernel_size=5, stride=1, padding=0),
-            nn.BatchNorm2d(6),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(6, 16, kernel_size=5, stride=1, padding=0),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.fc = nn.Linear(400, 120)
-        self.relu = nn.ReLU()
-        self.fc1 = nn.Linear(120, 84)
-        self.relu1 = nn.ReLU()
-        self.fc2 = nn.Linear(84, num_classes)
-        
-    def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.fc(out)
-        out = self.relu(out)
-        out = self.fc1(out)
-        out = self.relu1(out)
-        out = self.fc2(out)
-        return out
 
 from data_management.loadDSSCharacters import dssLettersDataset
 
+from classification_models.CNN_models import CharacterCNN, LeNet5, DanNet1
 
 
 def trainModel():
@@ -222,9 +135,9 @@ def trainModel():
 
             # print the model training and validation information
             print("[INFO] EPOCH: {}/{}".format(e, EPOCHS))
-            print("Train loss: {:.6f}, Train accuracy: {:.4f}".format(
+            print("   Train loss: {:.6f}, Train accuracy: {:.4f}".format(
                 avgTrainLoss, trainCorrect))
-            print("Val loss: {:.6f}, Val accuracy: {:.4f}\n".format(
+            print("   Val loss: {:.6f}, Val accuracy: {:.4f}\n".format(
                 avgValLoss, valCorrect))
 
 
