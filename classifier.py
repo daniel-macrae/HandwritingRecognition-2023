@@ -17,10 +17,31 @@ import torch.nn as nn
 
 from data_management.loadDSSCharacters import dssLettersDataset
 
-from classification_models.CNN_models import CharacterCNN, LeNet5, DanNet1
+from classification_models import CNN_models
 
 
-def trainModel():
+
+
+def get_args_parser(add_help=True):
+    import argparse
+
+    parser = argparse.ArgumentParser(description="PyTorch Detection Training", add_help=add_help)
+ 
+    parser.add_argument("--model", default="LeNet5", type=str, metavar="N", help="name of the CNN model")
+
+    ## POSSIBLE NAMES OF CNNs ARE:
+    # LeNet5
+    # DanNet1
+    # CharacterCNN
+    
+    parser.add_argument("--epochs", default=50, type=int, help="number of epochs to run")
+
+
+    return parser
+
+
+
+def trainModel(model, args):
 
     train_dir = 'Data/dssLetters/train/'
     val_dir = 'Data/dssLetters/test/'
@@ -31,7 +52,7 @@ def trainModel():
     # define training hyperparameters
     INIT_LR = 1e-3
     BATCH_SIZE = 128
-    EPOCHS = 100
+    EPOCHS = args.epochs
 
     VALIDATION_RATE = 5 # note down the train/val error every X epochs
 
@@ -47,8 +68,8 @@ def trainModel():
 
     # set the device we will be using to train the model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
 
-    model = LeNet5().to(device)
     # initialize our optimizer and loss function
     opt = Adam(model.parameters(), lr=INIT_LR)
     criterion = nn.CrossEntropyLoss()
@@ -145,10 +166,11 @@ def trainModel():
     # only saving one for now
     os.makedirs("classification_models", exist_ok = True)
 
-    args = {
-        "plot_loss": "classification_models/plot_loss_L5.png",
-        "plot_acc": "classification_models/plot_acc_L5.png",
-        "model": "classification_models/model_L5.pth"
+    # filenames that include the name of the model (e.g. LeNet5)
+    saveArgs = {
+        "plot_loss": "classification_models/plot_loss_" + args.model + "_ep_" + str(args.epochs) +  ".png",
+        "plot_acc": "classification_models/plot_acc_" + args.model + "_ep_" + str(args.epochs) + ".png",
+        "model": "classification_models/model_" + args.model + "_ep_" + str(args.epochs) + ".pth"
     }
 
     # plot the training loss and accuracy
@@ -163,7 +185,7 @@ def trainModel():
     plt.xlabel("Epoch #")
     plt.ylabel("Loss")
     plt.legend()
-    plt.savefig(args["plot_loss"])
+    plt.savefig(saveArgs["plot_loss"])
 
     plt.style.use("ggplot")
     plt.figure()
@@ -173,12 +195,20 @@ def trainModel():
     plt.xlabel("Epoch #")
     plt.ylabel("Accuracy")
     plt.legend()
-    plt.savefig(args["plot_acc"])
+    plt.savefig(saveArgs["plot_acc"])
     # serialize the model to disk
-    torch.save(model.state_dict(), args["model"])
+    torch.save(model.state_dict(), saveArgs["model"])
 
     print("DONE!")
-    print("Duration: ", (startTime - time.time())/60, "minutes")
+    print("Duration: ", (time.time() - startTime)/60, "minutes")
 
 if __name__ == "__main__":
-    trainModel()
+    args = get_args_parser().parse_args()
+
+ 
+    # load the model, using the string from args.model, from the CNN_models files
+    print("Training model:", args.model)
+    modelClassObject = getattr(CNN_models, args.model)
+    model = modelClassObject()
+
+    trainModel(model, args)
