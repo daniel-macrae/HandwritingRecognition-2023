@@ -8,6 +8,9 @@ from data_management.dssLetters import augment_training_set
 SETTINGS
 """
 
+
+
+
 source_folder = "monkbrill2/"           # where the original data is
 temp_folder = "Data/dssLettersTemp"     # for intermediate operations, gets deleted when this code is done
 target_folder = "Data/dssLetters"       # where to put the final train,test,validate folders
@@ -26,13 +29,13 @@ desired_size = 32      # and to what size (eg. 50 is 50x50)
 
 # whether or not to fill in the class imbalance with Habbakuk images
 fillClassImbalance = True
-fill_amount = 0.3
+fill_amount = 0.3 # up to 30% of the class with the max number of training samples
 
 
 
 augment_training = True  # yes or no augmentaion applied on the whole training set
 possible_transforms = ["rotate", "shear", "warp", "erode", "dilate"]
-number_of_augmentations = 1   # 5 sets of augmentions per original image
+number_of_augmentations = 5   # 5 sets of augmentions per original image
 
 
 
