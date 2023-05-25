@@ -28,7 +28,7 @@ desired_size = 32      # and to what size (eg. 50 is 50x50)
 
 
 # whether or not to fill in the class imbalance with Habbakuk images
-fillClassImbalance = True
+fillClassImbalance = False
 fill_amount = 0.3 # up to 30% of the class with the max number of training samples
 
 
