@@ -35,13 +35,15 @@ def get_args_parser(add_help=True):
     # CharacterCNN
     
     parser.add_argument("--epochs", default=50, type=int, help="number of epochs to run")
+    
+    parser.add_argument("--filename", default="classifier", type=str, help="name of file to store the results in")
 
 
     return parser
 
 
 
-def trainModel(model, args):
+def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, gridsearch = False):
 
     train_dir = 'Data/dssLetters/train/'
     val_dir = 'Data/dssLetters/test/'
@@ -50,9 +52,9 @@ def trainModel(model, args):
     validation_set = dssLettersDataset(folder_path= val_dir)
 
     # define training hyperparameters
-    INIT_LR = 1e-3
-    BATCH_SIZE = 128
+ 
     EPOCHS = args.epochs
+
 
     VALIDATION_RATE = 5 # note down the train/val error every X epochs
 
@@ -162,45 +164,47 @@ def trainModel(model, args):
                 avgValLoss, valCorrect))
 
 
+    if not gridsearch:
+        # only saving one for now
+        saving_dir = os.path.join("classification_models/", args.filename)
+        os.makedirs(saving_dir, exist_ok = True)
 
-    # only saving one for now
-    os.makedirs("classification_models", exist_ok = True)
+        # filenames that include the name of the model (e.g. LeNet5)
+        saveArgs = {
+            "plot_loss": saving_dir + "/plot_loss_" + args.model + "_bs_" + str(BATCH_SIZE) +"-LR_" + str(INIT_LR) + "_DR_" + str(DROPOUT_RATE) +" .png",
+            "plot_acc": saving_dir + "/plot_acc_" + args.model + "_bs_" + str(BATCH_SIZE) +"-LR_" + str(INIT_LR) + "_DR_" + str(DROPOUT_RATE) +" .png",
+            "model": saving_dir + "/model_" + args.model + "_bs_" + str(BATCH_SIZE) +"-LR_" + str(INIT_LR) + "_DR_" + str(DROPOUT_RATE) + ".pth"
+        }
+        # plot the training loss and accuracy
+        epochs = np.arange(len(H["train_loss"]))*VALIDATION_RATE
 
-    # filenames that include the name of the model (e.g. LeNet5)
-    saveArgs = {
-        "plot_loss": "classification_models/plot_loss_" + args.model + "_ep_" + str(args.epochs) +  ".png",
-        "plot_acc": "classification_models/plot_acc_" + args.model + "_ep_" + str(args.epochs) + ".png",
-        "model": "classification_models/model_" + args.model + "_ep_" + str(args.epochs) + ".pth"
-    }
+        plt.style.use("ggplot")
+        plt.figure()
+        plt.plot(epochs, H["train_loss"],  label="train_loss")
+        plt.plot(epochs, H["val_loss"], label="val_loss")
+        plt.title("Training and Validation Loss on Dataset")
+        plt.xlabel("Epoch #")
+        plt.ylabel("Loss")
+        plt.legend()
+        plt.savefig(saveArgs["plot_loss"])
 
-    # plot the training loss and accuracy
-
-    epochs = np.arange(len(H["train_loss"]))*VALIDATION_RATE
-
-    plt.style.use("ggplot")
-    plt.figure()
-    plt.plot(epochs, H["train_loss"],  label="train_loss")
-    plt.plot(epochs, H["val_loss"], label="val_loss")
-    plt.title("Training and Validation Loss on Dataset")
-    plt.xlabel("Epoch #")
-    plt.ylabel("Loss")
-    plt.legend()
-    plt.savefig(saveArgs["plot_loss"])
-
-    plt.style.use("ggplot")
-    plt.figure()
-    plt.plot(epochs, H["train_acc"], label="train_acc")
-    plt.plot(epochs, H["val_acc"], label="val_acc")
-    plt.title("Training and Validation Accuracy on Dataset")
-    plt.xlabel("Epoch #")
-    plt.ylabel("Accuracy")
-    plt.legend()
-    plt.savefig(saveArgs["plot_acc"])
-    # serialize the model to disk
-    torch.save(model.state_dict(), saveArgs["model"])
+        plt.style.use("ggplot")
+        plt.figure()
+        plt.plot(epochs, H["train_acc"], label="train_acc")
+        plt.plot(epochs, H["val_acc"], label="val_acc")
+        plt.title("Training and Validation Accuracy on Dataset")
+        plt.xlabel("Epoch #")
+        plt.ylabel("Accuracy")
+        plt.legend()
+        plt.savefig(saveArgs["plot_acc"])
+        # serialize the model to disk
+        torch.save(model.state_dict(), saveArgs["model"])
 
     print("DONE!")
     print("Duration: ", (time.time() - startTime)/60, "minutes")
+
+    if  gridsearch:
+        return avgTrainLoss, trainCorrect, avgValLoss, valCorrect,  (time.time() - startTime)/60, EPOCHS 
 
 if __name__ == "__main__":
     args = get_args_parser().parse_args()

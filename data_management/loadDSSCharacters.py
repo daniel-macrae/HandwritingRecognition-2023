@@ -16,8 +16,8 @@ class dssLettersDataset(Dataset):
 
         self.convert_tensor = transforms.ToTensor()
         
-        print(folder_path)
-        print("   ", self.characterClasses)
+        #print(folder_path)
+        #print("   ", self.characterClasses)
 
         #self.resize_image = transforms.Resize((32,32), antialias=True)
 

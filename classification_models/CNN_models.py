@@ -2,7 +2,7 @@ import torch.nn as nn
 
 
 class CharacterCNN(nn.Module):
-    def __init__(self, numChannels = 1, classes = 27, dropout_rate = 0.5):
+    def __init__(self, numChannels = 1, classes = 27, batch_size = 16, dropout_rate = 0.5):
         super(CharacterCNN, self).__init__()
 
         """
@@ -15,9 +15,9 @@ class CharacterCNN(nn.Module):
         #self.logSoftmax = nn.LogSoftmax(dim=1)
         """
         self.conv1 = nn.Conv2d(numChannels, 32, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(32, 16, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(32, batch_size, kernel_size=3, stride=1, padding=1)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.fc1 = nn.Linear( 16 *12* 12, 64) #this shoulf be BATCH_SIZE *12* 12 but that doesnt work
+        self.fc1 = nn.Linear( batch_size *12* 12, 64) #this shoulf be BATCH_SIZE *12* 12 but that doesnt work
         self.fc2 = nn.Linear(64, classes)
         self.relu = nn.ReLU() # could also just use nn.functional.relu
         #self.logSoftmax = nn.LogSoftmax(dim=1)
@@ -40,20 +40,22 @@ class CharacterCNN(nn.Module):
 
 
 class DanNet1(nn.Module):
-    def __init__(self, num_classes=27):
+    def __init__(self, num_classes=27, batch_size = 16, dropout_rate = 0.5):
         super(DanNet1, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=0),
-            nn.BatchNorm2d(16),
+            nn.Conv2d(1, batch_size, kernel_size=3, stride=1, padding=0),
+            nn.BatchNorm2d(batch_size),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.fc = nn.Linear(3600, 128)
+        self.fc = nn.Linear(batch_size *24 *24, 128)
         self.relu = nn.ReLU()
         self.fc1 = nn.Linear(128, num_classes)
         
     def forward(self, x):
         out = self.layer1(x)
+        print(out.shape)
         out = out.reshape(out.size(0), -1)
+        print(out.shape)
         out = self.fc(out)
         out = self.relu(out)
         out = self.fc1(out)
@@ -61,7 +63,7 @@ class DanNet1(nn.Module):
 
 
 class LeNet5(nn.Module):
-    def __init__(self, num_classes=27):
+    def __init__(self, num_classes=27, batch_size = 16, dropout_rate = 0.5):
         super(LeNet5, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(1, 6, kernel_size=5, stride=1, padding=0),
@@ -69,11 +71,11 @@ class LeNet5(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size = 2, stride = 2))
         self.layer2 = nn.Sequential(
-            nn.Conv2d(6, 16, kernel_size=5, stride=1, padding=0),
-            nn.BatchNorm2d(16),
+            nn.Conv2d(6, batch_size, kernel_size=5, stride=1, padding=0),
+            nn.BatchNorm2d(batch_size),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.fc = nn.Linear(400, 120)
+        self.fc = nn.Linear(batch_size * 5 * 5, 120)
         self.relu = nn.ReLU()
         self.fc1 = nn.Linear(120, 84)
         self.relu1 = nn.ReLU()
