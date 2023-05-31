@@ -28,7 +28,7 @@ def get_args_parser(add_help=True):
 
 
 def grid_search(args):
-    print("It is working")
+    print("Starting Grid Search")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
