@@ -103,7 +103,7 @@ def grid_search(args):
 
 
         # store the results in a dataframe, making a new row for this trial here
-        tempDict = {"CNN_model" : CNN_model, 
+        tempDict = {"CNN_model" : args.model, 
                     "train_loss" : train_loss, 
                     "validation_loss" : validation_loss,
                      "train_accuracy" : train_accuracy,
@@ -115,16 +115,27 @@ def grid_search(args):
 
 
         # Let parallel runs write to the same results file
+        """
         try:
             RESULTS_DATAFRAME = pd.read_excel(output_filename)
             RESULTS_DATAFRAME.loc[len(RESULTS_DATAFRAME)+1] = resultsDict
         except:
             RESULTS_DATAFRAME.loc[0] = resultsDict
             #output_filename = 'grid_backup.xlsx'
-        RESULTS_DATAFRAME.drop(RESULTS_DATAFRAME.filter(regex="Unname"), axis=1, inplace=True)
+        """
+        
+        try:
+            RESULTS_DATAFRAME = pd.read_excel(output_filename)
+            RESULTS_DATAFRAME = RESULTS_DATAFRAME.append(resultsDict, ignore_index=True)
+        except FileNotFoundError:
+            RESULTS_DATAFRAME = pd.DataFrame(resultsDict, index=[0])
+        except:
+            print("Error occurred while reading or writing the excel file.")
+            continue
+        
+        RESULTS_DATAFRAME.drop(RESULTS_DATAFRAME.filter(regex="Unnamed"), axis=1, inplace=True)
         RESULTS_DATAFRAME.to_excel(output_filename) # saves on every iteration (in case this takes long, or crashes, we can still pull the results out)
-
-
+        
 
 if __name__ == '__main__':
     args = get_args_parser().parse_args()
