@@ -1,6 +1,4 @@
 import matplotlib
-matplotlib.use("Agg") # ??¿¿
-
 # import the necessary packages
 from sklearn.metrics import classification_report
 from torchvision.transforms import ToTensor
@@ -8,7 +6,6 @@ from torch.utils.data import DataLoader
 from torch.optim import Adam
 import matplotlib.pyplot as plt
 import numpy as np
-import argparse
 import time
 import os
 import torch
@@ -162,6 +159,7 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
                 avgTrainLoss, trainCorrect))
             print("   Val loss: {:.6f}, Val accuracy: {:.4f}\n".format(
                 avgValLoss, valCorrect))
+            
     print("gridsearch is ", gridsearch)
     if  gridsearch == True:
         print('it is returning stuff')
