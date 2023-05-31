@@ -64,7 +64,7 @@ def grid_search(args):
     RESULTS_DATAFRAME = pd.DataFrame(columns=["CNN_model",'batch_size', 'learning_rate', 'dropout_rate',"train_loss", "validadtion_loss",
                                                "train_accuracy", "validation_accuracy", "time_to_train", "epochs"])
 
-     print("running grid search for ", str(args.model))
+    print("running grid search for ", str(args.model))
     idx = 0
     for params in grid:    
 

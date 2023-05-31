@@ -53,9 +53,9 @@ class DanNet1(nn.Module):
         
     def forward(self, x):
         out = self.layer1(x)
-        print(out.shape)
+        #print(out.shape)
         out = out.reshape(out.size(0), -1)
-        print(out.shape)
+        #print(out.shape)
         out = self.fc(out)
         out = self.relu(out)
         out = self.fc1(out)
