@@ -26,6 +26,7 @@ def get_args_parser(add_help=True):
 
 
 def grid_search(args):
+    print("It is working")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -143,5 +144,6 @@ def grid_search(args):
 
 if __name__ == '__main__':
     args = get_args_parser().parse_args()
+    print("It is doing somethings")
     grid_search(args)
 
