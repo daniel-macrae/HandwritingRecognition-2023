@@ -7,4 +7,4 @@
 #SBATCH --mem=6GB
 module load Miniconda3
 source activate HWR2023
-python grid_search.py --filename LeNet5_1 --epochs 50
+python grid_search.py --filename LeNet5_1 --epochs 80

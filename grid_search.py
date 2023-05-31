@@ -61,8 +61,10 @@ def grid_search(args):
 
     # GRID SEARCH LOOP
    
-    RESULTS_DATAFRAME = pd.DataFrame(columns=["CNN_model",'batch_size', 'learning_rate', 'dropout_rate',"train_loss", "validadtion_loss",
-                                               "train_accuracy", "validation_accuracy", "time_to_train", "epochs"])
+    RESULTS_DATAFRAME = pd.DataFrame(columns=[  "CNN_model",'batch_size', 'learning_rate', 'dropout_rate',"train_loss", "validadtion_loss",
+                                                "train_accuracy", "validation_accuracy", 
+                                                "lowest_validation_loss" , "lowest_validation_loss_epoch", "highest_validation_accuracy" , "highest_validation_accuracy_epoch",
+                                                "time_to_train", "epochs"])
 
     print("running grid search for ", str(args.model))
     idx = 0
@@ -97,7 +99,7 @@ def grid_search(args):
         train_accuracy = 0
         validation_accuracy = 0
 
-        train_loss, train_accuracy, validation_loss, validation_accuracy, time_to_train, total_epochs = classifier.trainModel(
+        train_loss, train_accuracy, validation_loss, validation_accuracy, lowestValLoss, lowestValLossEpoch, highestValAccuracy, highestValAccuracyEpoch, time_to_train, total_epochs = classifier.trainModel(
             CNN_model, args, INIT_LR=params['learning_rate'], BATCH_SIZE=params['batch_size'],
             DROPOUT_RATE=params['dropout_rate'], gridsearch = True)
 
@@ -105,8 +107,12 @@ def grid_search(args):
         tempDict = {"CNN_model" : args.model, 
                     "train_loss" : train_loss, 
                     "validation_loss" : validation_loss,
-                     "train_accuracy" : train_accuracy,
+                    "train_accuracy"  : train_accuracy,
                     "validation_accuracy" : validation_accuracy,
+                    "lowest_validation_loss" : lowestValLoss,
+                    "lowest_validation_loss_epoch" : lowestValLossEpoch, 
+                    "highest_validation_accuracy" : highestValAccuracy, 
+                    "highest_validation_accuracy_epoch" : highestValAccuracyEpoch,
                     "time_to_train" : time_to_train,
                     "epochs" : total_epochs}
         
