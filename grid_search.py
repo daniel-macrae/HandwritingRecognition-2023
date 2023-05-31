@@ -44,7 +44,7 @@ def grid_search(args):
 
     grid = list(ParameterGrid(hyper_grid))
     random.shuffle(grid)  # randomly shuffle the grid (in case we don't get many trials done, at least there is more variety)
-    print(len(grid))
+    print("Size of grid:", len(grid))
 
 
     # AMOUNT OF GRID TO SAMPLE
@@ -75,7 +75,6 @@ def grid_search(args):
         # check to see if these parameters have already been tried
         try:
             df = pd.read_excel(saving_file)
-            print("OPENED A FILE :)")
             if (df[param_columns] == params).all(1).any():
                 continue
         except: pass
@@ -91,7 +90,7 @@ def grid_search(args):
         
         
         idx += 1
-        print(idx)
+        print("training model #", idx)
         time_to_train = None
         train_loss = None
         validation_loss = None
@@ -129,7 +128,6 @@ def grid_search(args):
             RESULTS_DATAFRAME.loc[len(RESULTS_DATAFRAME)+1] = resultsDict
         except Exception:
             traceback.print_exc()
-            print("MAKING NEW FILE")
             RESULTS_DATAFRAME = pd.DataFrame(resultsDict, index=[0])
         
         RESULTS_DATAFRAME.drop(RESULTS_DATAFRAME.filter(regex="Unnamed"), axis=1, inplace=True)
