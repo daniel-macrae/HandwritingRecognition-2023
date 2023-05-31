@@ -162,10 +162,11 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
                 avgTrainLoss, trainCorrect))
             print("   Val loss: {:.6f}, Val accuracy: {:.4f}\n".format(
                 avgValLoss, valCorrect))
-
-    if  gridsearch:
+    print("gridsearch is ", gridsearch)
+    if  gridsearch == True:
         print('it is returning stuff')
         return avgTrainLoss, trainCorrect, avgValLoss, valCorrect,  (time.time() - startTime)/60, EPOCHS 
+    
     else:
         # only saving one for now
         saving_dir = os.path.join("classification_models/", args.filename)
