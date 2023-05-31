@@ -48,7 +48,7 @@ def grid_search(args):
     param_columns = list(grid[0].keys())
     
  
-    output_filename = str(args.filename) + ".xls"
+    output_filename = str(args.filename) + ".xlsx"
     print(output_filename)
 
 
