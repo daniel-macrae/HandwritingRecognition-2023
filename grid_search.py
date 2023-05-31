@@ -7,6 +7,8 @@ import classifier
 import argparse
 import os
 
+import traceback
+
 
 def get_args_parser(add_help=True):
     parser = argparse.ArgumentParser(description="PyTorch Detection Training", add_help=add_help)
@@ -51,16 +53,9 @@ def grid_search(args):
     
  
     output_filename = str(args.filename) + ".xlsx"
-    print(output_filename)
-    saving_dir = os.path.join("classification_models/", args.filename)
+    saving_dir = os.path.join("classification_models", args.filename)
     os.makedirs(saving_dir, exist_ok = True)
     saving_file = os.path.join(saving_dir, output_filename)
-
-
-    if torch.cuda.is_available():
-        num_episodes = 4000
-    else:
-        num_episodes = 50
 
 
 
@@ -79,7 +74,8 @@ def grid_search(args):
         
         # check to see if these parameters have already been tried
         try:
-            df = pd.read_excel(output_filename)
+            df = pd.read_excel(saving_file)
+            print("OPENED A FILE :)")
             if (df[param_columns] == params).all(1).any():
                 continue
         except: pass
@@ -106,7 +102,6 @@ def grid_search(args):
             CNN_model, args, INIT_LR=params['learning_rate'], BATCH_SIZE=params['batch_size'],
             DROPOUT_RATE=params['dropout_rate'], gridsearch = True)
 
-
         # store the results in a dataframe, making a new row for this trial here
         tempDict = {"CNN_model" : args.model, 
                     "train_loss" : train_loss, 
@@ -131,19 +126,18 @@ def grid_search(args):
         
         try:
             RESULTS_DATAFRAME = pd.read_excel(saving_file)
-            RESULTS_DATAFRAME = RESULTS_DATAFRAME.append(resultsDict, ignore_index=True)
-        except FileNotFoundError:
+            RESULTS_DATAFRAME.loc[len(RESULTS_DATAFRAME)+1] = resultsDict
+        except Exception:
+            traceback.print_exc()
+            print("MAKING NEW FILE")
             RESULTS_DATAFRAME = pd.DataFrame(resultsDict, index=[0])
-        except:
-            print("Error occurred while reading or writing the excel file.")
-            continue
         
         RESULTS_DATAFRAME.drop(RESULTS_DATAFRAME.filter(regex="Unnamed"), axis=1, inplace=True)
-        RESULTS_DATAFRAME.to_excel(saving_file) # saves on every iteration (in case this takes long, or crashes, we can still pull the results out)
+        RESULTS_DATAFRAME.to_excel(saving_file, index=False) # saves on every iteration (in case this takes long, or crashes, we can still pull the results out)
+
         
 
 if __name__ == '__main__':
     args = get_args_parser().parse_args()
-    print("It is doing somethings")
     grid_search(args)
 

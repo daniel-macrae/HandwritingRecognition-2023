@@ -141,16 +141,19 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
                     # calculate the number of correct predictions
                     valCorrect += (output.argmax(1) == y).type(torch.float).sum().item()
 
-            # calculate the average training and validation loss
-            avgTrainLoss = totalTrainLoss / trainSteps
-            avgValLoss = totalValLoss / valSteps
+            # calculate the average training and validation loss  #
+            avgTrainLoss = (totalTrainLoss / trainSteps).item()  # and detatch from tensor (into a float, using .item())
+            avgValLoss = (totalValLoss / valSteps).item()
+            # detatch them from the GPU
+
+
             # calculate the training and validation accuracy
             trainCorrect = trainCorrect / len(train_loader.dataset)
             valCorrect = valCorrect / len(validation_loader.dataset)
             # update our training history
-            H["train_loss"].append(avgTrainLoss.cpu().detach().numpy())
+            H["train_loss"].append(avgTrainLoss)
             H["train_acc"].append(trainCorrect)
-            H["val_loss"].append(avgValLoss.cpu().detach().numpy())
+            H["val_loss"].append(avgValLoss)
             H["val_acc"].append(valCorrect)
 
             # print the model training and validation information
