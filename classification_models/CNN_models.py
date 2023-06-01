@@ -34,7 +34,9 @@ class CharacterCNN(nn.Module):
         x = self.pool(self.relu(self.conv2(x)))
         x = self.dropout(x)
         #x = torch.flatten(x, 1)
+        print(x.shape)
         x = x.view(x.size(0), -1) #same as flatten
+        print(x.shape)
         x = self.relu(self.fc1(x))
         x = self.dropout(x)
         output = self.fc2(x)
@@ -57,9 +59,9 @@ class DanNet1(nn.Module):
         
     def forward(self, x):
         out = self.layer1(x)
-        #print(out.shape)
+        print(out.shape)
         out = out.reshape(out.size(0), -1)
-        #print(out.shape)
+        print(out.shape)
         out = self.fc(out)
         out = self.relu(out)
         out = self.fc1(out)
