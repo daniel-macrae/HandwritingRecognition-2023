@@ -19,6 +19,8 @@ from classification_models import CNN_models
 
 
 
+
+
 def get_args_parser(add_help=True):
     import argparse
 
@@ -52,8 +54,9 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
  
     EPOCHS = args.epochs
 
-
     VALIDATION_RATE = 5 # note down the train/val error every X epochs
+    VERBOSE = False # Whether to print the losses on each validation step
+    
 
     train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
     validation_loader = DataLoader(validation_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
@@ -63,6 +66,12 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
     # calculate steps per epoch for training and validation set
     trainSteps = len(train_loader.dataset) // BATCH_SIZE
     valSteps = len(validation_loader.dataset) // BATCH_SIZE
+
+    # logging
+    lowestValLoss = 1e10
+    lowestValLossEpoch = None
+    highestValAccuracy = 0
+    highestValAccuracyEpoch = None
 
 
     # set the device we will be using to train the model
@@ -87,7 +96,7 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
 
     # loop over our epochs
 
-    for e in range(0, EPOCHS):
+    for e in range(1, EPOCHS + 1):
         # set the model in training mode
         model.train()
         # initialize the total training and validation loss
@@ -141,29 +150,41 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
                     # calculate the number of correct predictions
                     valCorrect += (output.argmax(1) == y).type(torch.float).sum().item()
 
-            # calculate the average training and validation loss
-            avgTrainLoss = totalTrainLoss / trainSteps
-            avgValLoss = totalValLoss / valSteps
+            # calculate the average training and validation loss  #
+            avgTrainLoss = (totalTrainLoss / trainSteps).item()  # and detatch from tensor (into a float, using .item())
+            avgValLoss = (totalValLoss / valSteps).item()
+            
+            
+
+
             # calculate the training and validation accuracy
             trainCorrect = trainCorrect / len(train_loader.dataset)
             valCorrect = valCorrect / len(validation_loader.dataset)
             # update our training history
-            H["train_loss"].append(avgTrainLoss.cpu().detach().numpy())
+            H["train_loss"].append(avgTrainLoss)
             H["train_acc"].append(trainCorrect)
-            H["val_loss"].append(avgValLoss.cpu().detach().numpy())
+            H["val_loss"].append(avgValLoss)
             H["val_acc"].append(valCorrect)
 
+            # logging
+            if avgValLoss < lowestValLoss:
+                lowestValLoss = avgValLoss
+                lowestValLossEpoch = e + 1
+            if valCorrect > highestValAccuracy:
+                highestValAccuracy = valCorrect
+                highestValAccuracyEpoch = e + 1
+
             # print the model training and validation information
-            print("[INFO] EPOCH: {}/{}".format(e, EPOCHS))
-            print("   Train loss: {:.6f}, Train accuracy: {:.4f}".format(
-                avgTrainLoss, trainCorrect))
-            print("   Val loss: {:.6f}, Val accuracy: {:.4f}\n".format(
-                avgValLoss, valCorrect))
+            if VERBOSE:
+                print("[INFO] EPOCH: {}/{}".format(e, EPOCHS))
+                print("   Train loss: {:.6f}, Train accuracy: {:.4f}".format(
+                    avgTrainLoss, trainCorrect))
+                print("   Val loss: {:.6f}, Val accuracy: {:.4f}\n".format(
+                    avgValLoss, valCorrect))
             
     print("gridsearch is ", gridsearch)
     if  gridsearch == True:
-        print('it is returning stuff')
-        return avgTrainLoss, trainCorrect, avgValLoss, valCorrect,  (time.time() - startTime)/60, EPOCHS 
+        return avgTrainLoss, trainCorrect, avgValLoss, valCorrect, lowestValLoss, lowestValLossEpoch, highestValAccuracy, highestValAccuracyEpoch, (time.time() - startTime)/60, EPOCHS 
     
     else:
         # only saving one for now

@@ -28,14 +28,14 @@ desired_size = 32      # and to what size (eg. 50 is 50x50)
 
 
 # whether or not to fill in the class imbalance with Habbakuk images
-fillClassImbalance = False
+fillClassImbalance = True
 fill_amount = 0.3 # up to 30% of the class with the max number of training samples
 
 
 
 augment_training = True  # yes or no augmentaion applied on the whole training set
 possible_transforms = ["rotate", "shear", "warp", "erode", "dilate"]
-number_of_augmentations = 5   # 5 sets of augmentions per original image
+number_of_augmentations = 10   # 5 sets of augmentions per original image
 
 
 

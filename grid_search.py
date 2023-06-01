@@ -7,6 +7,8 @@ import classifier
 import argparse
 import os
 
+import traceback
+
 
 def get_args_parser(add_help=True):
     parser = argparse.ArgumentParser(description="PyTorch Detection Training", add_help=add_help)
@@ -26,7 +28,7 @@ def get_args_parser(add_help=True):
 
 
 def grid_search(args):
-    print("It is working")
+    print("Starting Grid Search")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -42,7 +44,7 @@ def grid_search(args):
 
     grid = list(ParameterGrid(hyper_grid))
     random.shuffle(grid)  # randomly shuffle the grid (in case we don't get many trials done, at least there is more variety)
-    print(len(grid))
+    print("Size of grid:", len(grid))
 
 
     # AMOUNT OF GRID TO SAMPLE
@@ -51,23 +53,18 @@ def grid_search(args):
     
  
     output_filename = str(args.filename) + ".xlsx"
-    print(output_filename)
-    saving_dir = os.path.join("classification_models/", args.filename)
+    saving_dir = os.path.join("classification_models", args.filename)
     os.makedirs(saving_dir, exist_ok = True)
     saving_file = os.path.join(saving_dir, output_filename)
-
-
-    if torch.cuda.is_available():
-        num_episodes = 4000
-    else:
-        num_episodes = 50
 
 
 
     # GRID SEARCH LOOP
    
-    RESULTS_DATAFRAME = pd.DataFrame(columns=["CNN_model",'batch_size', 'learning_rate', 'dropout_rate',"train_loss", "validadtion_loss",
-                                               "train_accuracy", "validation_accuracy", "time_to_train", "epochs"])
+    RESULTS_DATAFRAME = pd.DataFrame(columns=[  "CNN_model",'batch_size', 'learning_rate', 'dropout_rate',"train_loss", "validadtion_loss",
+                                                "train_accuracy", "validation_accuracy", 
+                                                "lowest_validation_loss" , "lowest_validation_loss_epoch", "highest_validation_accuracy" , "highest_validation_accuracy_epoch",
+                                                "time_to_train", "epochs"])
 
     print("running grid search for ", str(args.model))
     idx = 0
@@ -79,7 +76,7 @@ def grid_search(args):
         
         # check to see if these parameters have already been tried
         try:
-            df = pd.read_excel(output_filename)
+            df = pd.read_excel(saving_file)
             if (df[param_columns] == params).all(1).any():
                 continue
         except: pass
@@ -95,24 +92,27 @@ def grid_search(args):
         
         
         idx += 1
-        print(idx)
+        print("training model #", idx)
         time_to_train = None
         train_loss = None
         validation_loss = None
         train_accuracy = 0
         validation_accuracy = 0
 
-        train_loss, train_accuracy, validation_loss, validation_accuracy, time_to_train, total_epochs = classifier.trainModel(
+        train_loss, train_accuracy, validation_loss, validation_accuracy, lowestValLoss, lowestValLossEpoch, highestValAccuracy, highestValAccuracyEpoch, time_to_train, total_epochs = classifier.trainModel(
             CNN_model, args, INIT_LR=params['learning_rate'], BATCH_SIZE=params['batch_size'],
             DROPOUT_RATE=params['dropout_rate'], gridsearch = True)
-
 
         # store the results in a dataframe, making a new row for this trial here
         tempDict = {"CNN_model" : args.model, 
                     "train_loss" : train_loss, 
                     "validation_loss" : validation_loss,
-                     "train_accuracy" : train_accuracy,
+                    "train_accuracy"  : train_accuracy,
                     "validation_accuracy" : validation_accuracy,
+                    "lowest_validation_loss" : lowestValLoss,
+                    "lowest_validation_loss_epoch" : lowestValLossEpoch, 
+                    "highest_validation_accuracy" : highestValAccuracy, 
+                    "highest_validation_accuracy_epoch" : highestValAccuracyEpoch,
                     "time_to_train" : time_to_train,
                     "epochs" : total_epochs}
         
@@ -131,18 +131,16 @@ def grid_search(args):
         
         try:
             RESULTS_DATAFRAME = pd.read_excel(saving_file)
-            RESULTS_DATAFRAME = RESULTS_DATAFRAME.append(resultsDict, ignore_index=True)
-        except FileNotFoundError:
+            RESULTS_DATAFRAME.loc[len(RESULTS_DATAFRAME)+1] = resultsDict
+        except Exception:
+            traceback.print_exc()
             RESULTS_DATAFRAME = pd.DataFrame(resultsDict, index=[0])
-        except:
-            print("Error occurred while reading or writing the excel file.")
-            continue
         
         RESULTS_DATAFRAME.drop(RESULTS_DATAFRAME.filter(regex="Unnamed"), axis=1, inplace=True)
-        RESULTS_DATAFRAME.to_excel(saving_file) # saves on every iteration (in case this takes long, or crashes, we can still pull the results out)
+        RESULTS_DATAFRAME.to_excel(saving_file, index=False) # saves on every iteration (in case this takes long, or crashes, we can still pull the results out)
+
         
 if __name__ == '__main__':
     args = get_args_parser().parse_args()
-    print("It is doing somethings")
     grid_search(args)
 
