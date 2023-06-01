@@ -19,7 +19,7 @@ class CharacterCNN(nn.Module):
         self.conv2 = nn.Conv2d(32, batch_size, kernel_size=3, stride=1, padding=1)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         #self.fc1 = nn.Linear( batch_size *12* 12, 64)  # 50x 50 input
-        self.fc1 = nn.Linear( batch_size *6* 6, 64)  # 32x 32 input
+        self.fc1 = nn.Linear( batch_size *8* 8, 64)  # 32x 32 input
 
         self.fc2 = nn.Linear(64, classes)
         self.relu = nn.ReLU() # could also just use nn.functional.relu
@@ -34,9 +34,8 @@ class CharacterCNN(nn.Module):
         x = self.pool(self.relu(self.conv2(x)))
         x = self.dropout(x)
         #x = torch.flatten(x, 1)
-        print(x.shape)
+        #print(x.shape)
         x = x.view(x.size(0), -1) #same as flatten
-        print(x.shape)
         x = self.relu(self.fc1(x))
         x = self.dropout(x)
         output = self.fc2(x)
@@ -53,15 +52,14 @@ class DanNet1(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size = 2, stride = 2))
         #self.fc = nn.Linear(batch_size *24 *24, 128) # 50x50 input
-        self.fc = nn.Linear(batch_size *12 *12, 128) # 32x32 input
+        self.fc = nn.Linear(batch_size *15 *15, 128) # 32x32 input
         self.relu = nn.ReLU()
         self.fc1 = nn.Linear(128, num_classes)
         
     def forward(self, x):
         out = self.layer1(x)
-        print(out.shape)
+        #print(out.shape)
         out = out.reshape(out.size(0), -1)
-        print(out.shape)
         out = self.fc(out)
         out = self.relu(out)
         out = self.fc1(out)
