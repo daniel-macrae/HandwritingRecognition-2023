@@ -141,7 +141,6 @@ def grid_search(args):
         RESULTS_DATAFRAME.drop(RESULTS_DATAFRAME.filter(regex="Unnamed"), axis=1, inplace=True)
         RESULTS_DATAFRAME.to_excel(saving_file) # saves on every iteration (in case this takes long, or crashes, we can still pull the results out)
         
-
 if __name__ == '__main__':
     args = get_args_parser().parse_args()
     print("It is doing somethings")
