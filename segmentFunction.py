@@ -46,22 +46,14 @@ def segment_dss_page(image):
                 continue
             # 2px border for legibility
             padding = 2
-            y1 = y-padding
-            y2 = y+h+padding
-            x1 = x-padding
-            x2 = x+w+padding
-            
-            if x1<0: x1=0
-            if y1<0: y1=0
-            if x2> im_width: x2 = im_width
-            if y2> im_height: y2 = im_height
-
-            roi_coords = [x1,y1,x2,y2] 
-             
+            y1 = max(0, y-padding)
+            y2 = min(y+h+padding, im_height)
+            x1 = max(0, x-padding)
+            x2 = min(x+w+padding, im_width)
 
             if (y2-y1) > 0 and (x2-x1) > 0:
                 BB_centers.append([int(x1+w/2),int(y1+h/2)])
-                bounding_boxes.append(roi_coords)
+                bounding_boxes.append(  [x1,y1,x2,y2] )
 
 
     return bounding_boxes, BB_centers
