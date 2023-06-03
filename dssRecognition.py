@@ -146,7 +146,6 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
 
 
 
-
 def main(args):
     source = args.input
     output_folder = args.output_folder
