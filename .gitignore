@@ -1,3 +1,5 @@
+*.pyc 
+
 monkbrill/*
 monkbrill2/*
 IAM-data/*
@@ -5,3 +7,4 @@ image-data/*
 Papers/*
 Data/*
 Modern_Hebrew/*
+Results/*
