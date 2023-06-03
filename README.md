@@ -16,9 +16,8 @@ Basic outline of tasks 1 & 2 in the "dssRecognition.py" file
 5. Apply the classifier to each letter
 6. Write the results into a word file
 
+To run the dssRecognition.py file (with extra arguments):\\
+**python dssRecognition --input pathToFolderOrImage --output_folder pathToResultsFolder --debugging TrueOrFalse --debugging_folder pathToFolder**
 
+Where 'debugging' will save images of the rotating the dss image, segmenting and clustering of the boudning boxes, to the debugging_folder
 
-Notes-to-self:
-- add args parser to pick which image or folder to run on (and output folder)
-- add debugging option so that it saves the intermediate images somewhere
-- also save the results as a txt file because word documents are annoying to find and open

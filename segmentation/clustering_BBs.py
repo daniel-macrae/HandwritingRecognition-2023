@@ -44,14 +44,14 @@ def cluster_bounding_boxes(img, BBs, Centers, num_peaks, k_range, plot=False):
                 colour = (int(colour[0]), int(colour[1]), int(colour[2]))
                 cv2.rectangle(drawing_img, (x1,y1), (x2,y2), color = colour, thickness=2)
 
-        for cnt in Centers:  cv2.circle(drawing_img, (cnt[0], cnt[1]), 5, (255,0,0), 5)
+        for cnt in Centers:  cv2.circle(drawing_img, (cnt[0], cnt[1]), 5, (0,0,255), 5) # red, image is in BGR?
 
-        plt.imshow(drawing_img)
-        plt.show()
+  
+        return sorted_cluster_datapoints, drawing_img
 
     
     
-    return sorted_cluster_datapoints
+    return sorted_cluster_datapoints, None
 
 
 

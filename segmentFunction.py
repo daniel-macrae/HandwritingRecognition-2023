@@ -31,7 +31,7 @@ def segment_dss_page(image):
         for j,contour in enumerate(contours):
             (x, y, w, h) = cv2.boundingRect(contour)
             # these are artifacts
-            if (w < 30 or h < 30):
+            if (w < 20 or h < 30):
                 continue
 
             # sometimes parts of characters are picked out as well, control these to change what gets detected
@@ -62,6 +62,7 @@ def segment_dss_page(image):
             if (y2-y1) > 0 and (x2-x1) > 0:
                 BB_centers.append([int(x1+w/2),int(y1+h/2)])
                 bounding_boxes.append(roi_coords)
+
 
     return bounding_boxes, BB_centers
                     

@@ -225,11 +225,10 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
     print("DONE!")
     print("Duration: ", (time.time() - startTime)/60, "minutes")
 
-    
+
 
 if __name__ == "__main__":
     args = get_args_parser().parse_args()
-
  
     # load the model, using the string from args.model, from the CNN_models files
     print("Training model:", args.model)
