@@ -204,7 +204,7 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
         plt.figure()
         plt.plot(epochs, H["train_loss"],  label="train_loss")
         plt.plot(epochs, H["val_loss"], label="val_loss")
-        plt.title("Training and Validation Loss on Dataset")
+        plt.title("Training and Validation Loss on Dataset" + str(args.model))
         plt.xlabel("Epoch #")
         plt.ylabel("Loss")
         plt.legend()
@@ -214,7 +214,7 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
         plt.figure()
         plt.plot(epochs, H["train_acc"], label="train_acc")
         plt.plot(epochs, H["val_acc"], label="val_acc")
-        plt.title("Training and Validation Accuracy on Dataset")
+        plt.title("Training and Validation Accuracy on Dataset " + str(args.model))
         plt.xlabel("Epoch #")
         plt.ylabel("Accuracy")
         plt.legend()
@@ -235,5 +235,17 @@ if __name__ == "__main__":
     print("Training model:", args.model)
     modelClassObject = getattr(CNN_models, args.model)
     model = modelClassObject()
+    if str(args.model) == "LeNet5":
+        LR = 0.00005
+        DR = 0.2
+        BS = 16
+    elif str(args.model) == "DanNet1":
+        LR = 0.00001
+        DR = 0.2
+        BS = 16
+    else:
+        LR = 0.0005     #0.005
+        DR = 0.2
+        BS = 64         #16
 
-    trainModel(model, args)
+    trainModel(model, args, INIT_LR=LR, BATCH_SIZE=BS, DROPOUT_RATE=DR)
