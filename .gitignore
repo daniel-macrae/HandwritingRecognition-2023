@@ -9,3 +9,9 @@ Data/*
 Modern_Hebrew/*
 Results/*
 debug/*
+.ipynb_checkpoints
+encoder
+decoder
+checkpoint*
+IAM-data.*
+IAM-data
