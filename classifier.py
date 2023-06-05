@@ -19,8 +19,6 @@ from classification_models import CNN_models
 
 
 
-
-
 def get_args_parser(add_help=True):
     import argparse
 
@@ -43,6 +41,7 @@ def get_args_parser(add_help=True):
 
 
 def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, gridsearch = False):
+    print("starting")
 
     train_dir = 'Data/dssLetters/train/'
     val_dir = 'Data/dssLetters/test/'
@@ -60,7 +59,7 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
 
     train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
     validation_loader = DataLoader(validation_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
-
+    print("data loaded")
 
 
     # calculate steps per epoch for training and validation set
@@ -95,7 +94,6 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
 
 
     # loop over our epochs
-
     for e in range(1, EPOCHS + 1):
         # set the model in training mode
         model.train()
@@ -204,7 +202,7 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
         plt.figure()
         plt.plot(epochs, H["train_loss"],  label="train_loss")
         plt.plot(epochs, H["val_loss"], label="val_loss")
-        plt.title("Training and Validation Loss on Dataset" + str(args.model))
+        plt.title("Training and Validation Loss on Dataset")
         plt.xlabel("Epoch #")
         plt.ylabel("Loss")
         plt.legend()
@@ -214,7 +212,7 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
         plt.figure()
         plt.plot(epochs, H["train_acc"], label="train_acc")
         plt.plot(epochs, H["val_acc"], label="val_acc")
-        plt.title("Training and Validation Accuracy on Dataset " + str(args.model))
+        plt.title("Training and Validation Accuracy on Dataset")
         plt.xlabel("Epoch #")
         plt.ylabel("Accuracy")
         plt.legend()
@@ -225,13 +223,15 @@ def trainModel(model, args, INIT_LR = 1e-3, BATCH_SIZE = 16, DROPOUT_RATE  = 0, 
     print("DONE!")
     print("Duration: ", (time.time() - startTime)/60, "minutes")
 
+    
 
 
 if __name__ == "__main__":
+    
     args = get_args_parser().parse_args()
+    print("Training model:", args.model)
  
     # load the model, using the string from args.model, from the CNN_models files
-    print("Training model:", args.model)
     modelClassObject = getattr(CNN_models, args.model)
     model = modelClassObject()
     if str(args.model) == "LeNet5":
@@ -243,8 +243,8 @@ if __name__ == "__main__":
         DR = 0.2
         BS = 16
     else:
-        LR = 0.0005     #0.005
+        LR = 0.005
         DR = 0.2
-        BS = 64         #16
+        BS = 16
 
-    trainModel(model, args, INIT_LR=LR, BATCH_SIZE=BS, DROPOUT_RATE=DR)
+    trainModel(model, args, INIT_LR=LR, BATCH_SIZE=BS, DROPOUT_RATE=DR, gridsearch = False)

@@ -160,7 +160,7 @@ def main(args):
     if debugging:
         os.makedirs(debugging_folder, exist_ok = True)
 
-    TEMP_PATH = "classification_models/model_L5.pth"
+    TEMP_PATH = "classification_models/LeNet5_FINALmodel/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
     classifier_model = get_dss_classifier_model(TEMP_PATH)
 
     # if image, run once
