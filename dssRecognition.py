@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from data_management.augmentation.commonAug import whitespaceRemover
 from skimage.transform import rotate
 from tqdm  import tqdm 
+import torch
 
 from segmentation.imageRotation import rotate_and_find_number_of_peaks, get_skew_angle
 from segmentFunction import segment_dss_page # segments BBs from an image (a whole page)
@@ -50,7 +51,15 @@ def write_to_document(classified_text, word_file_path):
 
 
 
-def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, debugging, debugging_folder):
+
+
+
+"""
+Function for the full Task 1 and 2 pipeline
+"""
+
+
+def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, device, debugging, debugging_folder):
 
     """ Load the image, and trim down the white space around the text """
     #img_path = os.path.join(sourceFolder, filename)
@@ -95,7 +104,7 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     """ Classify the Letters """
     # run the classifier on each BB of each row
     # outputs a list of strings  (1 string of letters == 1 row)
-    text_results = classify_letters(rotated_image, BB_groups_sorted, classifier_model)
+    text_results = classify_letters(rotated_image, BB_groups_sorted, classifier_model, device)
 
 
     """ Save results to a word document """
@@ -160,13 +169,14 @@ def main(args):
     if debugging:
         os.makedirs(debugging_folder, exist_ok = True)
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     TEMP_PATH = "classification_models/LeNet5_FINALmodel/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
-    classifier_model = get_dss_classifier_model(TEMP_PATH)
+    classifier_model = get_dss_classifier_model(TEMP_PATH, device)
 
     # if image, run once
     if os.path.isfile(source): 
         print("SEGMENTING A SINGLE IMAGE")
-        segment_and_classify_dss_image(source, output_folder, classifier_model, debugging, debugging_folder)
+        segment_and_classify_dss_image(source, output_folder, classifier_model, device, debugging, debugging_folder)
 
     # if folder, loop through all images in the folder
     else:
@@ -176,7 +186,7 @@ def main(args):
             #print(filename)
 
             input_path = os.path.join(sourceFolder, filename) # get the path to the image file
-            segment_and_classify_dss_image(input_path, output_folder, classifier_model, debugging, debugging_folder)
+            segment_and_classify_dss_image(input_path, output_folder, classifier_model, device, debugging, debugging_folder)
 
 
 
