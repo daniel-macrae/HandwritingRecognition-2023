@@ -188,8 +188,8 @@ def main(source, output_folder, debugging, debugging_folder):
         os.makedirs(debugging_folder, exist_ok = True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    TEMP_PATH = "classification_models/LeNet5_FINALmodel/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
-    classifier_model = get_dss_classifier_model(TEMP_PATH, device)
+    MODEL_PATH = "classification_models/LeNet5_FINALmodel/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
+    classifier_model = get_dss_classifier_model(MODEL_PATH, device)
 
     # if image, run once
     if os.path.isfile(source): 
