@@ -18,7 +18,7 @@ Basic outline of tasks 1 & 2 in the "dssRecognition.py" file
 
 To run the dssRecognition.py file (with extra arguments):
 
-**python dssRecognition --input pathToFolderOrImage --output_folder pathToResultsFolder --debugging True_or_DontIncludeThisArgument --debugging_folder pathToFolder**
+**python dssRecognition pathToInputFolderOrImage**
 
-Where 'debugging' will save images of the rotating the dss image, segmenting and clustering of the boudning boxes, to the debugging_folder. The code can either do text recognition on a single image, or a whole folder of images, depending on what you pass to the 'input'.
+There's an option to enable/disable saving debugging outputs to the 'debug' folder at the very end, in the "if __name__ == "__main__":" thing
 
