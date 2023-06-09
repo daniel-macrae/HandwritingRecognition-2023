@@ -1,5 +1,6 @@
 import cv2
 import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from data_management.augmentation.commonAug import whitespaceRemover
@@ -50,7 +51,12 @@ def write_to_document(classified_text, word_file_path):
 
 
 
-
+def write_to_txt_file(classified_text, txt_file_path):
+    with open(txt_file_path, 'wb') as f:
+        for line in classified_text:
+            line = line +'\n'
+            encoded_result = line.encode("UTF-8")
+            f.write(encoded_result)
 
 
 
@@ -107,11 +113,27 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     text_results = classify_letters(rotated_image, BB_groups_sorted, classifier_model, device)
 
     """ Save results to a word document """
-    filename = os.path.split(input_path)[-1].split('.')[0]
-    output_filename = filename + ".docx"
-    output_file_path = os.path.join(outputFolder, output_filename)
+    #filename = os.path.split(input_path)[-1].split('.')[0]
+    #output_filename = filename + ".docx"
+    #output_file_path = os.path.join(outputFolder, output_filename)
 
-    write_to_document(text_results, output_file_path) 
+    #write_to_document(text_results, output_file_path) 
+
+    """  Save the results to a txt file  """
+    filename = os.path.split(input_path)[-1].split('.')[0]
+    output_filename = filename + "_characters.txt"
+    output_file_path = os.path.join(outputFolder, output_filename)
+    write_to_txt_file(text_results, output_file_path)
+    #f = open(output_file_path, 'wb')
+    #print(text_results)
+    
+    #
+
+      #really, just using UTF8 for everything makes things a lot easier
+    #outfile = 'where your data goes'
+    
+    
+
 
 
     """ IF DEBUGGING, save seperate images of the rotating of the image, and segmentation and clustering of the BBs"""
@@ -154,15 +176,12 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
 
 
 
-def main(args):
-    source = args.input
-    output_folder = args.output_folder
-
-    debugging = args.debugging
-    debugging_folder = args.debugging_folder
+def main(source, output_folder, debugging, debugging_folder):
 
     print(source, output_folder)
     print(debugging, debugging_folder, '\n')
+
+    os.makedirs(output_folder, exist_ok = True)
 
     # make a folder to put the debugging images in
     if debugging:
@@ -180,7 +199,7 @@ def main(args):
     # if folder, loop through all images in the folder
     else:
         sourceFolder = source
-        print("LOOPING THROUGH FOLDER")
+        print("LOOPING THROUGH IMAGES FOLDER")
         for filename in tqdm(os.listdir(sourceFolder)):
             #print(filename)
 
@@ -188,24 +207,31 @@ def main(args):
             segment_and_classify_dss_image(input_path, output_folder, classifier_model, device, debugging, debugging_folder)
 
 
-
+"""
 
 def get_args_parser(add_help=True):
     import argparse
     parser = argparse.ArgumentParser(description="PyTorch Detection Training", add_help=add_help)
     parser.add_argument("--input", default="Data/image-data", type=str, help="path to input image or folder of images")
-    parser.add_argument("--output_folder", default="Results", type=str, help="folder to save the results in")
+    parser.add_argument("--output_folder", default="results", type=str, help="folder to save the results in")
     
     parser.add_argument("--debugging", default=True, type=bool, help="whether to save images of the intermediate steps")
     parser.add_argument("--debugging_folder", default="debug", type=str, help="folder to save the debugging images in")
 
     return parser
 
+    """
 
 if __name__ == "__main__":
-    args = get_args_parser().parse_args()    
+    
+    input_folder = sys.argv[1]
+    print(sys.argv[1])  
 
-    main(args)
+    output_folder = 'results'
+    debugging = True
+    debugging_folder = "debug"
+
+    main(input_folder, output_folder, debugging, debugging_folder)
     
 
 
