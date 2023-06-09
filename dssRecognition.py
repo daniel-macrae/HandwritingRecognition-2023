@@ -68,10 +68,8 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
 
     """ Find the optimal rotation of the page (sometimes it is skewed 2-3 degrees) """
     blurred_img, best_rotation_angle, rot_image, num_peaks = rotate_and_find_number_of_peaks(img)
-    #best_rotation_angle2 =     # alternate method to find the right rotation of the page
-    best_rotation_angle += -get_skew_angle(img)
-    best_rotation_angle = int(best_rotation_angle/2)
-    print(best_rotation_angle)
+    best_rotation_angle += -get_skew_angle(img) # alternate method to find the right rotation of the page
+    best_rotation_angle = int(best_rotation_angle/2) # averaging them usually gives good results
     
     # this function rotates the original image, with the angle being defined in the counterclockwise
     rotated_image = rotate(img.copy(), best_rotation_angle, resize=True, cval=1, clip=False, mode ='constant')
