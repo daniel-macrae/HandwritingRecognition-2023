@@ -64,7 +64,7 @@ def find_connected_components(thresholded_img):
         x2 = min(x+w+padding, im_width)
 
 
-        if h > 200:
+        if h > 180:
             #print([x1,y1,x2,y2])
             #continue
             cutout = thresholded_img.copy()[y1:y2, x1:x2]

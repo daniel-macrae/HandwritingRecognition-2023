@@ -68,8 +68,10 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
 
     """ Find the optimal rotation of the page (sometimes it is skewed 2-3 degrees) """
     blurred_img, best_rotation_angle, rot_image, num_peaks = rotate_and_find_number_of_peaks(img)
-    #best_rotation_angle = getSkewAngle(img)    # alternate method to find the right rotation of the page
-
+    #best_rotation_angle2 =     # alternate method to find the right rotation of the page
+    best_rotation_angle += -get_skew_angle(img)
+    best_rotation_angle = int(best_rotation_angle/2)
+    print(best_rotation_angle)
     
     # this function rotates the original image, with the angle being defined in the counterclockwise
     rotated_image = rotate(img.copy(), best_rotation_angle, resize=True, cval=1, clip=False, mode ='constant')
@@ -105,7 +107,6 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     # run the classifier on each BB of each row
     # outputs a list of strings  (1 string of letters == 1 row)
     text_results = classify_letters(rotated_image, BB_groups_sorted, classifier_model, device)
-
 
     """ Save results to a word document """
     filename = os.path.split(input_path)[-1].split('.')[0]
@@ -144,7 +145,7 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
 
         # save a txt file of the results
         # saving a txt file doesn't seem to work with the hebrew letters, so just print them for now
-        print(text_results)
+        #print(text_results)
         path = os.path.join(debugging_folder, filename + '_RESULTS.docx')
         write_to_document(text_results, path) 
         #with open(path, 'w') as f:

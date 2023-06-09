@@ -33,7 +33,6 @@ class CharacterCNN(nn.Module):
         return output
 
 
-
 class LeNet5(nn.Module):
     def __init__(self, num_classes=27, batch_size = 16, dropout_rate = 0.5):
         super(LeNet5, self).__init__()
@@ -55,15 +54,12 @@ class LeNet5(nn.Module):
         
     def forward(self, x):
         out = self.layer1(x)
-        out = self.dropout(x)
         out = self.layer2(out)
-        out = self.dropout(out)
         out = out.reshape(out.size(0), -1)
         out = self.fc(out)
         out = self.relu(out)
         out = self.fc1(out)
         out = self.relu1(out)
-        out = self.dropout(out)
         out = self.fc2(out)
         return out
     
