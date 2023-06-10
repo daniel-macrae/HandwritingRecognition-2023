@@ -27,3 +27,16 @@ Basic outline of tasks 1 & 2 in the "dssRecognition.py" file
 
 There's an option to enable/disable saving debugging outputs to the 'debug' folder at the very end, in the "if __name__ == "__main__":" thing
 
+
+If you don't have yet Anaconda installed in your system you can do so by following these steps:
+1. Download Anaconda installer
+
+  ```wget https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Linux-x86_64.sh```
+
+2. Install Anaconda
+
+  ```bash Anaconda3-2023.03-1-Linux-x86_64.sh```
+
+3. Accept license terms
+4. Select installation directory
+5. Set path variables and restart shell
