@@ -166,8 +166,8 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
         # save a txt file of the results
         # saving a txt file doesn't seem to work with the hebrew letters, so just print them for now
         #print(text_results)
-        path = os.path.join(debugging_folder, filename + '_RESULTS.docx')
-        write_to_document(text_results, path) 
+        path = os.path.join(debugging_folder, filename + '_RESULTS.txt')
+        write_to_txt_file(text_results, path) 
         #with open(path, 'w') as f:
         #    for line in text_results:
         #        f.write(f"{0}\n")
@@ -177,9 +177,6 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
 
 
 def main(source, output_folder, debugging, debugging_folder):
-
-    print(source, output_folder)
-    print(debugging, debugging_folder, '\n')
 
     os.makedirs(output_folder, exist_ok = True)
 
@@ -225,13 +222,26 @@ def get_args_parser(add_help=True):
 if __name__ == "__main__":
     
     input_folder = sys.argv[1]
-    print(sys.argv[1])  
+    #print(sys.argv[1]) 
+    try: 
+        x = (sys.argv[2])
+        debugging = True
+    except:
+        debugging = False
 
-    output_folder = 'results'
-    debugging = True
-    debugging_folder = "debug"
+    output_folder = './results'
+    #debugging = True
+    debugging_folder = "./debug"
+
+    print("\nInput folder:  ", input_folder)
+    print("Output folder: ", output_folder)
+    print("Saving intermediate results in './debug' folder:", debugging,'\n')
+    
 
     main(input_folder, output_folder, debugging, debugging_folder)
+
+    print("\nDONE!")
+    print("Results, as txt files, can be found in the './results' folder")
     
 
 
