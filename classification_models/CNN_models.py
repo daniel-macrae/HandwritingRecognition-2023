@@ -5,11 +5,15 @@ class CharacterCNN(nn.Module):
     def __init__(self, numChannels = 1, classes = 27, batch_size = 16, dropout_rate = 0.5):
         super(CharacterCNN, self).__init__()
 
-        self.conv1 = nn.Conv2d(numChannels, 32, kernel_size=7, stride=1, padding=2)
-        self.conv2 = nn.Conv2d(32, batch_size, kernel_size=7, stride=1, padding=2)
+        self.conv1 =nn.Sequential(
+            nn.Conv2d(numChannels, 32, kernel_size=7, stride=1, padding=2),
+            nn.BatchNorm2d(32))
+        self.conv2 =nn.Sequential(
+            nn.Conv2d(32, batch_size, kernel_size=7, stride=1, padding=2),
+            nn.BatchNorm2d(batch_size)) 
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         #self.fc1 = nn.Linear( batch_size *12* 12, 64)  # 50x 50 input
-        self.fc1 = nn.Linear( batch_size *8* 8, 64)  # 32x 32 input
+        self.fc1 = nn.Linear( batch_size *6* 6, 64)  # 32x 32 input
 
         self.fc2 = nn.Linear(64, classes)
         self.relu = nn.ReLU() # could also just use nn.functional.relu
@@ -51,16 +55,23 @@ class LeNet5(nn.Module):
         self.fc1 = nn.Linear(120, 84)
         self.relu1 = nn.ReLU()
         self.fc2 = nn.Linear(84, num_classes)
+        self.dropout = nn.Dropout(dropout_rate)       
+
         
     def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.fc(out)
-        out = self.relu(out)
-        out = self.fc1(out)
-        out = self.relu1(out)
-        out = self.fc2(out)
+        x = self.layer1(x)
+        x = self.dropout(x)
+        x = self.layer2(x)
+        print(x.shape)
+        x = self.dropout(x)
+        x = x.reshape(x.size(0), -1)
+        x = self.fc(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc1(x)
+        x = self.relu1(x)
+        x = self.dropout(x)
+        out = self.fc2(x)
         return out
     
 
@@ -77,11 +88,12 @@ class DanNet1(nn.Module):
         self.fc = nn.Linear(batch_size *15 *15, 128) # 32x32 input
         self.relu = nn.ReLU()
         self.fc1 = nn.Linear(128, num_classes)
+        self.dropout = nn.Dropout(dropout_rate)       
+
         
     def forward(self, x):
         out = self.layer1(x)
-        out = self.dropout(x)
-        #print(out.shape)
+        out = self.dropout(out)
         out = out.reshape(out.size(0), -1)
         out = self.fc(out)
         out = self.relu(out)

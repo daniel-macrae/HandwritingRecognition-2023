@@ -24,7 +24,7 @@ def get_args_parser(add_help=True):
 
     parser = argparse.ArgumentParser(description="PyTorch Detection Training", add_help=add_help)
  
-    parser.add_argument("--model", default="LeNet5", type=str, metavar="N", help="name of the CNN model")
+    parser.add_argument("--model", default="CharacterCNN", type=str, metavar="N", help="name of the CNN model")
 
     ## POSSIBLE NAMES OF CNNs ARE:
     # LeNet5
