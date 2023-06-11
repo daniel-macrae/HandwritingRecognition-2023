@@ -2,11 +2,11 @@
 
 1. Create a conda environment, and install the dependencies:
    
-   ```conda env create -f Gr9_HWR3env.yml ```
+   ```conda env create -f Gr9_HWR_env.yml ```
 
 2. Activate the conda environment
 
-   ```conda activate Gr9_HWR3env```
+   ```conda activate Gr9_HWR_env```
 
 2. Run the testing script
 

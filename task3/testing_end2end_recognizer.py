@@ -71,7 +71,8 @@ def main(args):
         print('Images directory argument is missing')
         return
 
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(device)
     current_directory = os.getcwd()
     image_folder = args[1]
     
@@ -108,16 +109,17 @@ def main(args):
     checkpoint = 'checkpoint-10000'
     save_location =  os.path.join(current_directory, f'{checkpoint}.zip')
     model_folder_location =  os.path.join(current_directory, f'{checkpoint}')
-    if os.path.exists(save_location):
-        print(f"The file '{save_location}' exists.")
-    else:
-        print(f"The file '{save_location}' does not exist.")
-        file_url = f"https://storage.googleapis.com/ayuda/{checkpoint}.zip"
-        download_file(file_url, save_location)
     
     if os.path.exists(model_folder_location):
         print(f"The model '{model_folder_location}' is already unzipped.")
     else:
+        if os.path.exists(save_location):
+            print(f"The file '{save_location}' exists.")
+        else:
+            print(f"The file '{save_location}' does not exist.")
+            file_url = f"https://storage.googleapis.com/ayuda/{checkpoint}.zip"
+            download_file(file_url, save_location)
+        
         print('unzipping directory')
         model_zip = f"{checkpoint}.zip"
         img_zip_path = os.path.join(current_directory, model_zip)
