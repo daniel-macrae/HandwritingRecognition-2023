@@ -10,10 +10,14 @@
 
 3. Run the testing script
 
-    ```python dssRecognition.py --help```
-   This will show instructions on how to use the script. You can set the input via the `-i` flag (defaults to `test_images/`, but can be individual file path as well). Results are written to a `results/` folder in the same directory the script is located at. 
+    ```python dssRecognition.py -i /path/to/images/folder```
     
-    Additionally, for additional viewing of our code's proceses, a `'debug/'` folder offers visualisatons of the results of the various steps of the segmentation and classification process, which can be enabled by passing the flag `--debug`.
+	or
+	 
+    ```python dssRecognition.py --help```
+    will show instructions on how to use the script. You can set the input via the `-i` flag (defaults to `test_images/`, but can be individual file path as well). Results are written to a `results/` folder in the same directory the script is located at. 
+    
+    Additionally, for extra viewing of our code's proceses, a `'debug/'` folder offers visualisatons of the results of the various steps of the segmentation and classification process, which can be enabled by passing the flag `--debug`.
 
 If you don't have yet Anaconda installed in your system you can do so by following these steps:
 1. Download Anaconda installer

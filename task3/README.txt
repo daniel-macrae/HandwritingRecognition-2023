@@ -10,9 +10,9 @@
 
 3. Run the testing script
 
-    ```python testing_end2end_recognizer.py test_imgs/```
+    ```python testing_end2end_recognizer.py -i path/to/test/images/```
 
-    It requires an argument for the path of the folder containing the images to be processed ("Test_imgs/" is the placeholder for this directory). Results are written to `/results` folder in the same directory the script is located at. 
+    It requires an argument for the path of the folder containing the images to be processed ("Test_imgs/" is the placeholder for this directory). Results are written to `/results` folder in the same directory the script is located at. Note that this pipeline will take longer to run than the one we submitted for tasks 1 & 2.
 
 
 

@@ -14,7 +14,7 @@
 
     It requires an argument for the path of the folder containing the images to be processed ("test_images/" is the placeholder for this directory). Results are written to a `/results` folder in the same directory the script is located at. 
     
-    Additionally, for additional viewing of our code's proceses, a '/debug' folder offers visualisatons of the results of the various steps of the segmentation and classification process, which can be enabled by passing another argument to the bash command (e.g. ```python dssRecognition.py ./test_images True```).
+    Additionally, for extra viewing of our code's proceses, a '/debug' folder offers visualisatons of the results of the various steps of the segmentation and classification process, which can be enabled by passing another argument to the bash command (e.g. ```python dssRecognition.py ./test_images True```).
 
 
 
