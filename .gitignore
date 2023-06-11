@@ -10,6 +10,7 @@ task1_2/Modern_Hebrew/*
 task1_2/results/*
 task1_2/debug/*
 task3/test_imgs/*
+task12/*
 debug/*
 .ipynb_checkpoints
 encoder
