@@ -16,6 +16,7 @@ from transformers import TrOCRProcessor
 from transformers import VisionEncoderDecoderModel
 from torch.utils.data import DataLoader
 from datasets import load_metric
+import argparse
 
 # downloads file from a URL
 def download_file(url, save_path):
@@ -66,17 +67,13 @@ class IAMDataset(Dataset):
     
     
 def main(args):
-    # check if argument exists
-    if(len(args) != 2):
-        print('Images directory argument is missing')
-        return
+
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(device)
     current_directory = os.getcwd()
-    image_folder = args[1]
-    
-    
+    image_folder = args.input
+
     # check if image folder exists
     if(len(image_folder) < 1):
         print("Invalid folder argument")
@@ -159,5 +156,11 @@ def main(args):
     return
 
 if __name__ == "__main__":
-    args = sys.argv
+    parser = argparse.ArgumentParser(description='Handwriting Recognition on IAM Dataset')
+
+    # Add arguments to the parser
+    parser.add_argument('-i', '--input', default="test_imgs/", type=str, help='Input images folder. Set to \
+                                                                                \'test_imgs/\' by default.')
+    # Parse the command-line arguments
+    args = parser.parse_args()
     main(args)

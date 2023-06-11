@@ -140,13 +140,16 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
         write_to_txt_file(text_results, path) 
 
 
+def create_folder_if_not_exists(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
 
 
 def main(args):
     source = args.input
     output_folder = args.output
     debugging = args.debug
-    
+    create_folder_if_not_exists(output_folder)
     # make a folder to put the debugging images in
     if debugging:
         os.makedirs("debug", exist_ok = True)
