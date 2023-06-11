@@ -13,7 +13,7 @@ from segmentation.segmentFunction import segment_dss_page # segments BBs from an
 from segmentation.clustering_BBs import cluster_bounding_boxes, sort_BB_clusters_horizontally
 from classification_models.DSS_Classifier import get_dss_classifier_model, classify_letters
 
-
+# function that helps visualise the segmentation, for the 'debugging' option
 def plotSegmentedBBs(img, BBs):
     for (x1,y1,x2,y2) in BBs:
         img = cv2.rectangle(img, (x1,y1), (x2,y2), color = (0,0,0), thickness=2)
@@ -26,10 +26,10 @@ def calculateLowCenters(BBs, Centers):
         h = y2 - y1
         w = x2 - x1
 
-        if h/w > 1.1:
+        if h/w > 1.1: # if the character is tall, set the 'center' to be lower
             new_center = [int((x2+x1)/2),   int(y2 - w/2)]
             LowCenters.append(new_center)
-        else:
+        else: # use the exact center coordinate of the bounding box
             LowCenters.append(old_center)
 
     return LowCenters
@@ -97,8 +97,6 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     text_results = classify_letters(rotated_image, BB_groups_sorted, classifier_model, device)
 
 
-    #write_to_document(text_results, output_file_path) 
-
     """  Save the results to a txt file  """
     filename = os.path.split(input_path)[-1].split('.')[0]
     output_filename = filename + "_characters.txt"
@@ -152,30 +150,31 @@ def main(source, output_folder, debugging, debugging_folder):
     if debugging:
         os.makedirs(debugging_folder, exist_ok = True)
 
+    # load the classification model, for task 2, that will run on the segmented letters from task 1
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     MODEL_PATH = "classification_models/LeNet5_FINALmodel/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
     MODEL_PATH = "classification_models/LeNet5CNN_FinalGOODPLOTS/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
     classifier_model = get_dss_classifier_model(MODEL_PATH, device)
 
-    # if image, run once
+    # if a path to a single image is passed, run once on that image
     if os.path.isfile(source): 
         print("SEGMENTING A SINGLE IMAGE")
         segment_and_classify_dss_image(source, output_folder, classifier_model, device, debugging, debugging_folder)
 
-    # if folder, loop through all images in the folder
+    # if a path to a folder is given folder, loop through all images in the folder
     else:
         sourceFolder = source
         print("LOOPING THROUGH IMAGES FOLDER")
         for filename in tqdm(os.listdir(sourceFolder)):
-            #print(filename)
-
             input_path = os.path.join(sourceFolder, filename) # get the path to the image file
             segment_and_classify_dss_image(input_path, output_folder, classifier_model, device, debugging, debugging_folder)
 
 
+
+
 if __name__ == "__main__":
     
-    input_folder = sys.argv[1]
+    input_folder = sys.argv[1] # get the input folder from the bash command (first argument)
 
     # if another argument is passed, then save the debugging images
     try: 

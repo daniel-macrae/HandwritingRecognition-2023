@@ -3,13 +3,16 @@ from data_management.dssLetters import duplicates_remover, train_test_val_splitt
 import shutil
 from data_management.dssLetters import augment_training_set
 
+"""
+This file contains the functions responsible for preparing and augmentating the monkbrill dataset, for the training of the classifier model (task 2)
+"""
+
+
+
 
 """
 SETTINGS
 """
-
-
-
 
 source_folder = "monkbrill2/"           # where the original data is
 temp_folder = "Data/dssLettersTemp"     # for intermediate operations, gets deleted when this code is done
