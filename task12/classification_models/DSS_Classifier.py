@@ -4,6 +4,7 @@ import torchvision.transforms as transforms
 from data_management.augmentation.commonAug import imgResizer
 from classification_models.Hebrew_Classes import hebrewCharacters
 import torch
+import cv2
 
 
 

@@ -152,8 +152,7 @@ def main(source, output_folder, debugging, debugging_folder):
 
     # load the classification model, for task 2, that will run on the segmented letters from task 1
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    MODEL_PATH = "classification_models/LeNet5_FINALmodel/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
-    MODEL_PATH = "classification_models/LeNet5CNN_FinalGOODPLOTS/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
+    MODEL_PATH = "classification_models/LeNet5_CNN_FINAL/model_LeNet5_bs_16-LR_5e-05_DR_0.2.pth"
     classifier_model = get_dss_classifier_model(MODEL_PATH, device)
 
     # if a path to a single image is passed, run once on that image
