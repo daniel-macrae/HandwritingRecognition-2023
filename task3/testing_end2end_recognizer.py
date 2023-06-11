@@ -70,7 +70,6 @@ def main(args):
 
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(device)
     current_directory = os.getcwd()
     image_folder = args.input
 
@@ -80,8 +79,6 @@ def main(args):
         return
     if(image_folder[-1] != '/'):
         image_folder = image_folder + '/'
-    
-    print(os.path.join(current_directory, image_folder))
     
     if not os.path.exists(os.path.join(current_directory, image_folder)):
         print(f"The folder '{os.path.join(current_directory, image_folder)}' is not found.")
