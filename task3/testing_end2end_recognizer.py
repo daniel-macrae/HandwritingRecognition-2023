@@ -17,7 +17,7 @@ from transformers import VisionEncoderDecoderModel
 from torch.utils.data import DataLoader
 from datasets import load_metric
 
-
+# downloads file from a URL
 def download_file(url, save_path):
     print(f"Downloading File at {save_path}")
     try:
@@ -29,12 +29,14 @@ def download_file(url, save_path):
     except requests.exceptions.RequestException as e:
         print(f"An error occurred while downloading the file: {e}")
 
+# creates a dataframe compatible with out dataset builder class
 def create_df(images_path):
     files = os.listdir(images_path)
     df = pd.DataFrame(files, columns=['file_name'])
     df["text"] = ""
     return df
 
+# creates a dataset out of a dataframe
 class IAMDataset(Dataset):
     def __init__(self, root_dir, df, processor, max_target_length=128):
         self.root_dir = root_dir
@@ -64,6 +66,7 @@ class IAMDataset(Dataset):
     
     
 def main(args):
+    # check if argument exists
     if(len(args) != 2):
         print('Images directory argument is missing')
         return
@@ -73,7 +76,7 @@ def main(args):
     image_folder = args[1]
     
     
-    
+    # check if image folder exists
     if(len(image_folder) < 1):
         print("Invalid folder argument")
         return
@@ -86,18 +89,22 @@ def main(args):
         print(f"The folder '{os.path.join(current_directory, image_folder)}' is not found.")
         return
     
+    # create dataframe from images contained in a folder
     df = create_df(image_folder)
     df['length'] = df['text'].str.len()
     print(f"Found {df.shape[0]} files")
 
+    # processor used in the dataset class to transform images, resize and normalize
     processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
 
+    # create a dataset out of the dataframe
     test_dataset = IAMDataset(root_dir=os.path.join(current_directory, image_folder),
                                df=df,
                                processor=processor)
-
+    # create a dataloader to feed the evaluation in batches
     test_dataloader = DataLoader(test_dataset, batch_size=8)
 
+    # Checks if the model checkpoint exists, if not it downloads it and extracts its contents
     checkpoint = 'checkpoint-10000'
     save_location =  os.path.join(current_directory, f'{checkpoint}.zip')
     model_folder_location =  os.path.join(current_directory, f'{checkpoint}')
@@ -119,17 +126,20 @@ def main(args):
         zip_ref.close()
         print('unzipped directory!')
 
+    # loads model checkpoint to device
     model = VisionEncoderDecoderModel.from_pretrained(checkpoint)
     model.to(device)
 
     print("Generating text")
 
+    # generate texts on batches
     results = []
     for batch in tqdm(test_dataloader):
         pixel_values = batch["pixel_values"].to(device)
         outputs = model.generate(pixel_values)
         pred_str = processor.batch_decode(outputs, skip_special_tokens=True)
         results = results + [(file_name, pred) for file_name, pred in zip(batch["file_name"], pred_str) ]
+    # craetes a results folder if it does not exists
     results_path = os.path.join(current_directory, 'results')
     if not os.path.exists(results_path):
         # Create the folder
@@ -137,6 +147,7 @@ def main(args):
         print(f"The folder '{results_path}' was created.")
     else:
         print(f"The folder '{results_path}' already exists.")
+    # writes a txt file for each image in which text was generated
     for img, pred in results:
         with open(os.path.join(current_directory, f'results/{img.replace(".png","")}_characters.txt'), 'w') as file:
             file.write(f"{pred}")
