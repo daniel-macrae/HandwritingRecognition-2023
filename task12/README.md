@@ -1,10 +1,10 @@
 # Instructions to test task 1 & 2 character recognition pipeline
 
-1. Create a conda environment, and install the dependencies:
+1. If you haven't already created the conda environemnt in tasks 3 (the environments for both tasks are identical), create a conda environment, and install the dependencies with:
    
    ```conda env create -f Gr9_HWR_env.yml ```
 
-2. Activate the conda environment
+2. Activate the conda environment (if you haven't already done so)
 
    ```conda activate Gr9_HWR_env```
 

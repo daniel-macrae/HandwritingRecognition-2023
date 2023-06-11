@@ -1,14 +1,14 @@
 # Instructions to test task 3 recognizer
 
-1. Create a conda environment, and install the dependencies:
+1. If you haven't already created the conda environemnt in tasks 1&2 (the environments for both tasks are identical), create a new conda environment, and install the dependencies:
    
    ```conda env create -f Gr9_HWR_env.yml ```
 
-2. Activate the conda environment
+2. Activate the conda environment (if you haven't already done so)
 
    ```conda activate Gr9_HWR_env```
 
-2. Run the testing script
+3. Run the testing script
 
     ```python testing_end2end_recognizer.py test_imgs/```
 
