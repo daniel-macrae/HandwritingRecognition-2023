@@ -59,7 +59,7 @@ class LeNet5(nn.Module):
         x = self.layer1(x)
         x = self.dropout(x)
         x = self.layer2(x)
-        print(x.shape)
+        #print(x.shape)
         x = self.dropout(x)
         x = x.reshape(x.size(0), -1)
         x = self.fc(x)
