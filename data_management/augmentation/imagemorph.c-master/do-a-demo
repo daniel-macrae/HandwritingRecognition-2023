@@ -1,3 +1,0 @@
-#!/bin/bash
-
-demo-imagemorph Zwolle-rgb.ppm 0.9 9

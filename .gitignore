@@ -1,13 +1,13 @@
 *.pyc 
 
-monkbrill/*
-monkbrill2/*
-IAM-data/*
-image-data/*
-Papers/*
-Data/*
-Modern_Hebrew/*
-Results/*
+task12/monkbrill/*
+task12/monkbrill2/*
+task12/IAM-data/*
+task12/image-data/*
+task12/Data/*
+task12/Modern_Hebrew/*
+task12/results/*
+task12/debug/*
 debug/*
 .ipynb_checkpoints
 encoder
