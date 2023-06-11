@@ -14,9 +14,6 @@
 
     It requires an argument for the path of the folder containing the images to be processed ("Test_imgs/" is the placeholder for this directory). Results are written to `/results` folder in the same directory the script is located at. 
 
-    The script will download the model weights (~ 4GB) as a zip file and unpack them, this might take a few minutes. Make sure you have around 8GB of free storage.
-
-
 
 If you don't have yet Anaconda installed in your system you can do so by following these steps:
 1. Download Anaconda installer
