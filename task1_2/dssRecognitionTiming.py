@@ -1,6 +1,7 @@
 import cv2
 import os
 import sys
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 from data_management.augmentation.commonAug import whitespaceRemover
@@ -54,6 +55,8 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     """ Load the image, and trim down the white space around the text """
     #img_path = os.path.join(sourceFolder, filename)
     img = cv2.imread(input_path, cv2.IMREAD_GRAYSCALE) #Read the img
+    (dim1, dim2) = img.shape
+    start_time = time.time()
     img = whitespaceRemover(img=img, padding=50) # crop it down to remove all the empty space around the text
 
     """ Find the optimal rotation of the page (sometimes it is skewed 2-3 degrees) """
@@ -71,6 +74,9 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
 
     # returns a list of bounding boxes ([x1,y1,x2,y2] each, top-left and bottom-right corner) and the center of each BB
     BBs, Centers = segment_dss_page(rotated_image)
+
+    end_segment_time = time.time()
+    
     
 
     # in case some letters are very tall (and protrude into the line above, lower their center point)
@@ -90,11 +96,15 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     # sort each row of BBs by their X-value
     BB_groups_sorted = sort_BB_clusters_horizontally(BB_groups, right_to_left=False)
 
+    clustering_end_time = time.time()
+
 
     """ Classify the Letters """
     # run the classifier on each BB of each row
     # outputs a list of strings  (1 string of letters == 1 row)
     text_results = classify_letters(rotated_image, BB_groups_sorted, classifier_model, device)
+
+    classify_end_time = time.time()
 
 
     """  Save the results to a txt file  """
@@ -106,11 +116,10 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     
     
 
-
-
     """ IF DEBUGGING, save seperate images of the rotating of the image, and segmentation and clustering of the BBs"""
     # saves intermediary results to a debugging folder
     if debugging:
+        
         # save the rotation result
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20,12))
         ax1.imshow(blurred_img, cmap='gray')
@@ -139,6 +148,15 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
         path = os.path.join(debugging_folder, filename + '_RESULTS.txt')
         write_to_txt_file(text_results, path) 
 
+    segment_time = end_segment_time - start_time
+    cluster_time = clustering_end_time - end_segment_time
+    classification_time = classify_end_time - clustering_end_time
+
+    
+    num_characters = sum(len(i) for i in text_results)
+    num_pixels = dim1 * dim2
+
+    return segment_time, cluster_time, classification_time, num_characters, num_pixels, (dim1, dim2)
 
 def create_folder_if_not_exists(folder_path):
     if not os.path.exists(folder_path):
@@ -168,11 +186,46 @@ def main(args):
     else:
         sourceFolder = source
         print("LOOPING THROUGH IMAGES FOLDER")
-        for filename in tqdm(os.listdir(sourceFolder)):
-            input_path = os.path.join(sourceFolder, filename) # get the path to the image file
-            segment_and_classify_dss_image(input_path, output_folder, classifier_model, device, debugging, "debug")
-
-
+        segment_times = []
+        clustering_times = []
+        classification_times = []
+        num_characters = []
+        num_pixels = []
+        img_dims = []
+        segmentation_per_letter = []
+        clustering_per_letter = []
+        class_per_letter = []
+        #for filename in tqdm(os.listdir(sourceFolder)):
+        for i in range(10):
+            print(i)
+            for filename in os.listdir(sourceFolder):
+                input_path = os.path.join(sourceFolder, filename) # get the path to the image file
+                segment_time, cluster_time, classification_time, num_character, num_pixel, img_dim = segment_and_classify_dss_image(input_path, output_folder, classifier_model, device, debugging, "debug")
+                segment_times.append(segment_time)
+                clustering_times.append(cluster_time)
+                classification_times.append(classification_time)
+                num_characters.append(num_character)
+                num_pixels.append(num_pixel)
+                img_dims.append(img_dim)
+                segmentation_per_letter.append(segment_time/num_character)
+                clustering_per_letter.append(cluster_time/num_character)
+                class_per_letter.append(classification_time/num_character)
+                
+        print(f"SEGMENTATION - Mean time: {np.mean(segment_times):.3f}, standard deviation: {np.std(segment_times):.3f} ")
+        print(f"CLUSTERING   - Mean time: {np.mean(clustering_times):.3f}, standard deviation: {np.std(clustering_times):.3f} ")
+        print(f"CLASSIFIER   - Mean time: {np.mean(classification_times):.3f}, standard deviation: {np.std(classification_times):.3f} ")
+        print("\n")
+        print(f"SEGMENTATION   - Mean time per letter: {np.mean(segmentation_per_letter):.5f}, standard deviation: {np.std(segmentation_per_letter):.5f} ")
+        print(f"CLUSTERING   - Mean time per letter: {np.mean(clustering_per_letter):.5f}, standard deviation: {np.std(clustering_per_letter):.5f} ")
+        print(f"CLASSIFIER   - Mean time per letter: {np.mean(class_per_letter):.5f}, standard deviation: {np.std(class_per_letter):.5f} ")
+        max_img_idx = num_pixels.index(max(num_pixels))
+        min_img_idx = num_pixels.index(min(num_pixels))
+        largest_img = img_dims[max_img_idx]
+        smallest_img = img_dims[min_img_idx]
+        print(f"Largest image = {largest_img},  Smallest = {smallest_img}")
+        print(f"Most letters = {max(num_characters)},  Lowest = {min(num_characters)}")
+       
+        
 
 
 if __name__ == "__main__":
@@ -190,6 +243,7 @@ if __name__ == "__main__":
     main(args)
 
     
+
 
 
 
