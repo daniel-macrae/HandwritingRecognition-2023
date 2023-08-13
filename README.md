@@ -170,14 +170,14 @@ For both tasks, the datasets must consist of a folder of images. For task 3, the
 The results of the character segmentation are mixed. While we are able to seperate the characters fairly well on the clear DSS images, the results are noticeably worse on the lower-quality or grainy DSS images, as seen below.
 
 
-![alt text](Figures\segmentation.jpg)
+![alt text](Figures/segmentation.jpg)
 
-![alt text](Figures\segmentation_broken_characters.jpg)
+![alt text](Figures/segmentation_broken_characters.jpg)
 
 
 The clustering approach for line segmentation appears promising given its simplicity, although is prone to occasional errors when there are lines with a very low number of characters, or when there are characters that straddle two lines of text. Skew corrections on the original image appears to reduce these errors slightly.
 
-![alt text](Figures\clustering_good_3.jpg)
+![alt text](Figures/clustering_good_3.jpg)
 
 
 The LeNet-5 model performs well on characters that are well-segmented, and is able to accuractly distingiugh the different classes of letters. This comes as a benefit alongside the small size, low computational cost, and quick speed of this model. However, in application to the DSS images, its performance is highly reliant on the segmentation step, with often leads to undesirable results given the challenge of segmenting the tricky DSS images.
