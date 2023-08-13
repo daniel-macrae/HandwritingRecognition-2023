@@ -2,10 +2,30 @@
 
 This repository contains code for three handwriting recognition tasks:
 1. Character segmentation on the Dead Sea Scrolls (DSS), using morphological operations.
-2. Character recognition of the segmented DSS characters, using a lightweight LeNet model.
+2. Character recognition of the segmented DSS characters, using a lightweight LeNet-5 model.
 3. Line recognition on a subset of the IAM dataset, using a large end-to-end TrOCR model.
 
 The code for these tasks are grouped into two subfolders, one for tasks 1 and 2, and one for task 3.
+
+
+<details>
+<summary>Example input image tasks 1 & 2</summary>
+<br>
+
+![green-divider](example_images\P123-Fg002-R-C01-R01-binarized.jpg)
+
+</details>
+
+
+<details>
+<summary>Example input image</summary>
+<br>
+
+![green-divider](example_images\a01-000u-00.png)
+
+</details>
+
+
 
 
 ![green-divider](https://user-images.githubusercontent.com/7065401/52071924-c003ad80-2562-11e9-8297-1c6595f8a7ff.png)
@@ -13,6 +33,35 @@ The code for these tasks are grouped into two subfolders, one for tasks 1 and 2,
 
 ### Methods
 
+<details>
+<summary>Tasks 1 & 2</summary>
+<br>
+
+
+
+
+
+
+##### Segmentation
+First, we wish to segment all of the handwritten characters present in the image. Given the varying image qualities of the binarised DSS images, this is very challenging. In our implementation, we first crop out the whitespace (which greatly reduces the size of the images, increasing the speed of the morphological operations), and then apply skew correction, morphological closing, Gaussian blurring, Otsu thresholding, erosion, and finally contour detection, in order to segment the characters into many smaller images.
+
+In order to sort the segmented characters both by and within lines, we use clustering of the center y coordinate of each letter to determine the number of lines present in each particular image, then group the characters by the optimal number of lines. Within each line, the characters are sorted from left to right by their x coordinates.
+
+##### Recognition (Classification)
+We then take the segmented images, and feed then to a LeNet-5 classifier. The final output are .txt files, one per input DSS image, which contains the transcribed text. 
+
+The LeNet-5 classifier is trained from randomised weights, on an augmented set of already-segmented DSS character images. Due to a very small number of segmented samples to train on, and a highly imbalanced dataset, we augment the training data using a random number (and order) of the following methods: rotation, shearing, warping, erosion and dilation.
+
+</details>
+
+
+<details>
+<summary>Task 3</summary>
+<br>
+
+For the end-to-end text recognition task, we use a TrOCR model. This architecture makes use of a pretrained image transformer model (BEiT, based on the ViT architecutre), as well as a pretrained text transformer model (RoBERTa, based on the BERT model). 
+
+</details>
 
 
 
@@ -81,7 +130,7 @@ For both tasks, the datasets must consist of a folder of images. For task 3, the
 
    ```conda activate Gr9_HWR_env```
 
-2. Run the testing script
+2. Run the testing script. Performs segmentation, clustering, then classification.
 
     ```python dssRecognition.py ./test_images```
 
