@@ -169,14 +169,14 @@ For both tasks, the datasets must consist of a folder of images. For task 3, the
 
 The results of the character segmentation are mixed. While we are able to seperate the characters fairly well on the clear DSS images, the results are noticeably worse on the lower-quality or grainy DSS images, as seen below
 
-- <details>
+<details>
 <summary>Segmentation on a high quality DSS image</summary>
 <br>
 
 ![alt text](Figures\segmentation.jpg)
 </details>
 
-- <details>
+<details>
 <summary>Segmentation on a DSS image with noise</summary>
 <br>
 
