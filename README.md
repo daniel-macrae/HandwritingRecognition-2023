@@ -21,7 +21,10 @@ The code for these tasks are grouped into two subfolders, one for tasks 1 and 2,
 <details>
 <summary>Installing Anaconda</summary>
 <br>
+
 If you don't have yet Anaconda installed in your system you can do so by following these steps:
+
+
 1. Download Anaconda installer
 
   ```wget https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Linux-x86_64.sh```
@@ -33,6 +36,7 @@ If you don't have yet Anaconda installed in your system you can do so by followi
 3. Accept license terms
 4. Select installation directory
 5. Set path variables and restart shell
+
 </details>
 
 1. Create a conda environment and install the necessary dependencies (for all tasks) with:
@@ -51,7 +55,7 @@ If you don't have yet Anaconda installed in your system you can do so by followi
 
 </details>
 
-
+<details>
 <summary>Datasets</summary>
 <br>
 
@@ -59,7 +63,7 @@ For both tasks, the datasets must consist of a folder of images. For task 3, the
 
 </details>
 
-
+<details>
 <summary>Running Tasks 1 & 2</summary>
 <br>
 
@@ -80,7 +84,7 @@ For both tasks, the datasets must consist of a folder of images. For task 3, the
 </details>
 
 
-
+<details>
 <summary>Running Task 3</summary>
 <br>
 
