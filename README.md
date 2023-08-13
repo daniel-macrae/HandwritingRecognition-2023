@@ -29,7 +29,7 @@ The code for these tasks are grouped into two subfolders, one for tasks 1 and 2,
 ![green-divider](https://user-images.githubusercontent.com/7065401/52071924-c003ad80-2562-11e9-8297-1c6595f8a7ff.png)
 
 
-### Methods
+## Methods
 
 <details>
 <summary>Tasks 1 & 2</summary>
@@ -40,12 +40,12 @@ The code for these tasks are grouped into two subfolders, one for tasks 1 and 2,
 
 
 
-##### Segmentation
+#### Segmentation
 First, we wish to segment all of the handwritten characters present in the image. Given the varying image qualities of the binarised DSS images, this is very challenging. In our implementation, we first crop out the whitespace (which greatly reduces the size of the images, increasing the speed of the morphological operations), and then apply skew correction, morphological closing, Gaussian blurring, Otsu thresholding, erosion, and finally contour detection, in order to segment the characters into many smaller images.
 
 In order to sort the segmented characters both by and within lines, we use clustering of the center y coordinate of each letter to determine the number of lines present in each particular image, then group the characters by the optimal number of lines. Within each line, the characters are sorted from left to right by their x coordinates.
 
-##### Recognition (Classification)
+#### Recognition (Classification)
 We then take the segmented images, and feed then to a LeNet-5 classifier. The final output are .txt files, one per input DSS image, which contains the transcribed text. 
 
 The LeNet-5 classifier is trained from randomised weights, on an augmented set of already-segmented DSS character images. Due to a very small number of segmented samples to train on, and a highly imbalanced dataset, we augment the training data using a random number (and order) of the following methods: rotation, shearing, warping, erosion and dilation.
@@ -68,7 +68,7 @@ For the end-to-end text recognition task, we use a TrOCR model. This architectur
 ![green-divider](https://user-images.githubusercontent.com/7065401/52071924-c003ad80-2562-11e9-8297-1c6595f8a7ff.png)
 
 
-### Instructions
+## Instructions
 
 
 <details>
@@ -163,9 +163,41 @@ For both tasks, the datasets must consist of a folder of images. For task 3, the
 
 ![green-divider](https://user-images.githubusercontent.com/7065401/52071924-c003ad80-2562-11e9-8297-1c6595f8a7ff.png)
 
-### Results
+## Results
+
+#### Task 1 & 2
+
+The results of the character segmentation are mixed. While we are able to seperate the characters fairly well on the clear DSS images, the results are noticeably worse on the lower-quality or grainy DSS images, as seen below
+
+- <details>
+<summary>Segmentation on a high quality DSS image</summary>
+<br>
+
+![alt text](Figures\segmentation.jpg)
+</details>
+
+- <details>
+<summary>Segmentation on a DSS image with noise</summary>
+<br>
+
+![alt text](Figures\segmentation_broken_characters.jpg)
+</details>
 
 
+The clustering approach for line segmentation appears promising given its simplicity, although is prone to occasional errors when there are lines with a very low number of characters, or when there are characters that straddle two lines of text. Skew corrections on the original image appears to reduce these errors slightly.
 
+
+<details>
+<summary>Clustering of segmented DSS charcters</summary>
+<br>
+
+![alt text](Figures\clustering_good_3.jpg)
+</details>
+
+The LeNet-5 model performs well on characters that are well-segmented, and is able to accuractly distingiugh the different classes of letters. This comes as a benefit alongside the small size, low computational cost, and quick speed of this model. However, in application to the DSS images, its performance is highly reliant on the segmentation step, with often leads to undesirable results given the challenge of segmenting the tricky DSS images.
+
+
+#### Task 3
+As expected, the TrOCR model achieves a character error rate (CER) of just 0.0976. However, this high performance also comes with a significantly higher computational cost than the methods used in tasks 1 and 2, due to the very large size of the TrOCR model, despite operating on the smaller in size IAM images.
 
 
