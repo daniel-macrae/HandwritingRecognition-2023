@@ -13,6 +13,10 @@ from segmentation.imageRotation import rotate_and_find_number_of_peaks, get_skew
 from segmentation.segmentFunction import segment_dss_page # segments BBs from an image (a whole page)
 from segmentation.clustering_BBs import cluster_bounding_boxes, sort_BB_clusters_horizontally
 from classification_models.DSS_Classifier import get_dss_classifier_model, classify_letters
+import warnings
+warnings.filterwarnings('ignore')
+
+
 
 # function that helps visualise the segmentation, for the 'debugging' option
 def plotSegmentedBBs(img, BBs):
@@ -58,6 +62,7 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     (dim1, dim2) = img.shape
     start_time = time.time()
     img = whitespaceRemover(img=img, padding=50) # crop it down to remove all the empty space around the text
+    img_width = img.shape[1]
 
     """ Find the optimal rotation of the page (sometimes it is skewed 2-3 degrees) """
     blurred_img, best_rotation_angle, rot_image, num_peaks = rotate_and_find_number_of_peaks(img)
@@ -95,6 +100,7 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
 
     # sort each row of BBs by their X-value
     BB_groups_sorted = sort_BB_clusters_horizontally(BB_groups, right_to_left=False)
+    num_rows = len(BB_groups_sorted)
 
     clustering_end_time = time.time()
 
@@ -156,7 +162,7 @@ def segment_and_classify_dss_image(input_path, outputFolder, classifier_model, d
     num_characters = sum(len(i) for i in text_results)
     num_pixels = dim1 * dim2
 
-    return segment_time, cluster_time, classification_time, num_characters, num_pixels, (dim1, dim2)
+    return segment_time, cluster_time, classification_time, num_characters, num_pixels, (dim1, dim2), num_rows, img_width
 
 def create_folder_if_not_exists(folder_path):
     if not os.path.exists(folder_path):
@@ -195,12 +201,15 @@ def main(args):
         segmentation_per_letter = []
         clustering_per_letter = []
         class_per_letter = []
+        total_times = []
+        numbers_of_rows = []
+        image_widths = []
         #for filename in tqdm(os.listdir(sourceFolder)):
-        for i in range(10):
+        for i in range(1):
             print(i)
             for filename in os.listdir(sourceFolder):
                 input_path = os.path.join(sourceFolder, filename) # get the path to the image file
-                segment_time, cluster_time, classification_time, num_character, num_pixel, img_dim = segment_and_classify_dss_image(input_path, output_folder, classifier_model, device, debugging, "debug")
+                segment_time, cluster_time, classification_time, num_character, num_pixel, img_dim, num_rows, img_width = segment_and_classify_dss_image(input_path, output_folder, classifier_model, device, debugging, "debug")
                 segment_times.append(segment_time)
                 clustering_times.append(cluster_time)
                 classification_times.append(classification_time)
@@ -210,6 +219,10 @@ def main(args):
                 segmentation_per_letter.append(segment_time/num_character)
                 clustering_per_letter.append(cluster_time/num_character)
                 class_per_letter.append(classification_time/num_character)
+                total_times.append(segment_time+cluster_time+classification_time)
+
+                numbers_of_rows.append(num_rows)
+                image_widths.append(img_width)
                 
         print(f"SEGMENTATION - Mean time: {np.mean(segment_times):.3f}, standard deviation: {np.std(segment_times):.3f} ")
         print(f"CLUSTERING   - Mean time: {np.mean(clustering_times):.3f}, standard deviation: {np.std(clustering_times):.3f} ")
@@ -224,7 +237,11 @@ def main(args):
         smallest_img = img_dims[min_img_idx]
         print(f"Largest image = {largest_img},  Smallest = {smallest_img}")
         print(f"Most letters = {max(num_characters)},  Lowest = {min(num_characters)}")
-       
+        print("\n")
+        print(f"TOTAL MEAN {np.mean(total_times):.3f} STD {np.std(total_times):.3f}")
+        print(f"MEAN WIDTH {np.mean(image_widths):.3f}")
+        print(f"MEAN ROWS {np.mean(numbers_of_rows):.3f}")
+        print(f"MEAN N CHARACTERS {np.mean(num_characters):.3f}")
         
 
 

@@ -15,9 +15,10 @@ from classification_models.DSS_Classifier import get_dss_classifier_model, class
 
 # function that helps visualise the segmentation, for the 'debugging' option
 def plotSegmentedBBs(img, BBs):
+    drawing_img = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB)
     for (x1,y1,x2,y2) in BBs:
-        img = cv2.rectangle(img, (x1,y1), (x2,y2), color = (0,0,0), thickness=2)
-    return img
+        drawing_img = cv2.rectangle(drawing_img, (x1,y1), (x2,y2), color = (0,0,255), thickness=2)
+    return drawing_img
 
 # better center points for tall letters (for clustering)
 def calculateLowCenters(BBs, Centers):
