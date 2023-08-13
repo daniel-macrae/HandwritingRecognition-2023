@@ -12,7 +12,7 @@ The code for these tasks are grouped into two subfolders, one for tasks 1 and 2,
 <summary>Example input image tasks 1 & 2</summary>
 <br>
 
-![green-divider](example_images\P123-Fg002-R-C01-R01-binarized.jpg)
+![alt text](example_images\P123-Fg002-R-C01-R01-binarized.jpg)
 
 </details>
 
@@ -21,7 +21,7 @@ The code for these tasks are grouped into two subfolders, one for tasks 1 and 2,
 <summary>Example input image</summary>
 <br>
 
-![green-divider](example_images\a01-000u-00.png)
+![alt text](example_images\a01-000u-00.png)
 
 </details>
 
