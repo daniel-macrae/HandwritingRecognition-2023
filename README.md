@@ -11,6 +11,16 @@ The code for these tasks are grouped into two subfolders, one for tasks 1 and 2,
 ![green-divider](https://user-images.githubusercontent.com/7065401/52071924-c003ad80-2562-11e9-8297-1c6595f8a7ff.png)
 
 
+### Methods
+
+
+
+
+
+
+![green-divider](https://user-images.githubusercontent.com/7065401/52071924-c003ad80-2562-11e9-8297-1c6595f8a7ff.png)
+
+
 ### Instructions
 
 
@@ -18,12 +28,11 @@ The code for these tasks are grouped into two subfolders, one for tasks 1 and 2,
 <summary>Installation</summary>
 <br>
 
+
+If you don't have yet Anaconda installed in your system you can do so by following these steps:
 <details>
 <summary>Installing Anaconda</summary>
 <br>
-
-If you don't have yet Anaconda installed in your system you can do so by following these steps:
-
 
 1. Download Anaconda installer
 
@@ -38,6 +47,7 @@ If you don't have yet Anaconda installed in your system you can do so by followi
 5. Set path variables and restart shell
 
 </details>
+
 
 1. Create a conda environment and install the necessary dependencies (for all tasks) with:
    
@@ -105,6 +115,10 @@ For both tasks, the datasets must consist of a folder of images. For task 3, the
 
 
 ![green-divider](https://user-images.githubusercontent.com/7065401/52071924-c003ad80-2562-11e9-8297-1c6595f8a7ff.png)
+
+### Results
+
+
 
 
 
